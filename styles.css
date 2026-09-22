@@ -190,11 +190,14 @@
 .pp-autohide-no-hover.autohide-props-with-banner .has-banner > .markdown-source-view > .cm-editor > .cm-scroller .metadata-container,
 .pp-autohide-no-hover.autohide-props-with-banner .has-banner > .markdown-reading-view > .markdown-preview-view .metadata-container {
   opacity: 0;
+  visibility: hidden;
   pointer-events: none;
+  transition: none;   /* no fade: the block would otherwise flash over the banner while fading out */
 }
 .pp-autohide-no-hover.autohide-props-with-banner .has-banner > .markdown-source-view > .cm-editor > .cm-scroller .metadata-container .metadata-content,
 .pp-autohide-no-hover.autohide-props-with-banner .has-banner > .markdown-reading-view > .markdown-preview-view .metadata-container .metadata-content {
   max-height: 0;
+  transition: none;
 }
 
 
