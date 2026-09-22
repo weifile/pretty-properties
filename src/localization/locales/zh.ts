@@ -226,4 +226,7 @@ export default {
   COVER_OPACITY: "不透明度（%）",
   COVER_MOSAIC: "马赛克",
   COVER_MOSAIC_DESC: "把封面图打成马赛克。数值是每个格子的边长（按原图像素），0 = 不打；越大格子越粗越明显。",
+  TOGGLE_PROPERTIES_AUTOHIDE: "切换属性区自动隐藏（显示 / 隐藏）",
+  PROPERTIES_AUTOHIDE_ON: "属性区：已隐藏（鼠标移到横幅顶部会显示）",
+  PROPERTIES_AUTOHIDE_OFF: "属性区：已显示",
 };

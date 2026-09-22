@@ -1,5 +1,6 @@
 import PrettyPropertiesPlugin from "src/main";
-import { TFile, MarkdownView, Editor, MarkdownFileInfo } from "obsidian";
+import { TFile, MarkdownView, Editor, MarkdownFileInfo, Notice } from "obsidian";
+import { updateAutoHideProps } from "src/updates/updateStyles";
 import { i18n } from "src/localization/localization";
 import { removeProperty } from "./propertyUtils";
 import { selectCoverImage } from "./imageUtils";
@@ -22,6 +23,18 @@ export function registerCommands(plugin: PrettyPropertiesPlugin) {
         name: i18n.t("HIDE_SHOW_HIDDEN_PROPERTIES"),
         callback: async () => {
             document.body.classList.toggle("show-hidden-properties");
+        },
+    });
+
+    // Hotkey-able toggle for "autohide properties block when banner is enabled"
+    plugin.addCommand({
+        id: "toggle-properties-autohide",
+        name: i18n.t("TOGGLE_PROPERTIES_AUTOHIDE"),
+        callback: async () => {
+            plugin.settings.autoHidePropertiesWithBanner = !plugin.settings.autoHidePropertiesWithBanner;
+            await plugin.saveSettings();
+            updateAutoHideProps(plugin);
+            new Notice(i18n.t(plugin.settings.autoHidePropertiesWithBanner ? "PROPERTIES_AUTOHIDE_ON" : "PROPERTIES_AUTOHIDE_OFF"));
         },
     });
 

@@ -227,4 +227,7 @@ export default {
   COVER_OPACITY: "Opacity (%)",
   COVER_MOSAIC: "Mosaic",
   COVER_MOSAIC_DESC: "Pixelates the cover image. Value = size of one block in source-image pixels; 0 = off. Bigger = coarser.",
+  TOGGLE_PROPERTIES_AUTOHIDE: "Toggle properties block autohide (show / hide)",
+  PROPERTIES_AUTOHIDE_ON: "Properties block: hidden (shows on hover over the banner)",
+  PROPERTIES_AUTOHIDE_OFF: "Properties block: shown",
 };
