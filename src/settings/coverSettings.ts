@@ -10,7 +10,6 @@ import {enhanceFormatTextArea} from "../utils/settingsHelper";
 
 import { AddPropertyModal, FormatTemplateModal } from 'src/modals/settingItemModals';
 import { ConfirmModal } from 'src/modals/confirmModal';
-import { COVER_MOSAICS, mosaicI18nKey } from 'src/utils/coverMosaics';
 
 
 
@@ -129,24 +128,6 @@ export const getCoverSettingsDefinitions = (tab: PPSettingTab) => {
                         await plugin.saveSettings();
                         updateAllCovers(plugin);
                     }));
-            }
-        }, {
-            name: i18n.t("DEFAULT_COVER_MOSAIC"),
-            description: i18n.t("DEFAULT_COVER_MOSAIC_DESC"),
-            visible: visible,
-            render: (setting: Setting) => {
-                setting.addDropdown(dropdown => {
-                    dropdown.addOption("", i18n.t("SCHEME_NONE"))
-                    for (const name of COVER_MOSAICS) {
-                        dropdown.addOption(name, i18n.t(mosaicI18nKey(name)))
-                    }
-                    dropdown.setValue(plugin.settings.defaultCoverMosaic)
-                    dropdown.onChange(async (value) => {
-                        plugin.settings.defaultCoverMosaic = value;
-                        await plugin.saveSettings();
-                        updateAllCovers(plugin);
-                    })
-                });
             }
         }, {
             name: i18n.t("COVER_RADIUS"),
@@ -663,22 +644,6 @@ export const showCoverSettings = (settingTab: PPSettingTab) => {
                 await plugin.saveSettings();
                 updateAllCovers(plugin);
             }));
-
-        new Setting(containerEl)
-        .setName(i18n.t("DEFAULT_COVER_MOSAIC"))
-        .setDesc(i18n.t("DEFAULT_COVER_MOSAIC_DESC"))
-        .addDropdown(dropdown => {
-            dropdown.addOption("", i18n.t("SCHEME_NONE"))
-            for (const name of COVER_MOSAICS) {
-                dropdown.addOption(name, i18n.t(mosaicI18nKey(name)))
-            }
-            dropdown.setValue(plugin.settings.defaultCoverMosaic)
-            dropdown.onChange(async (value) => {
-                plugin.settings.defaultCoverMosaic = value;
-                await plugin.saveSettings();
-                updateAllCovers(plugin);
-            })
-        });
 
         new Setting(containerEl)
         .setName(i18n.t("COVER_RADIUS"))

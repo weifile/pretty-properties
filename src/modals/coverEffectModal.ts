@@ -2,36 +2,35 @@ import { TFile, Modal, Setting, App, FrontMatterCache } from "obsidian";
 import PrettyPropertiesPlugin from "src/main";
 import { i18n } from "src/localization/localization";
 import { getNestedProperty, setNestedProperty, deleteNestedProperty } from "src/utils/propertyUtils";
-import { COVER_MOSAICS, mosaicI18nKey, isCoverMosaic } from "src/utils/coverMosaics";
 
 
 /**
- * Cover effect: opacity slider (cover_opacity, 0–100) and gradient fill dropdown (cover_gradient).
+ * Cover effect: opacity slider (cover_opacity, 0–100) and mosaic slider (cover_mosaic = blocks across, 0 = off).
  * Default values are removed from frontmatter again so notes stay clean.
  */
 export class CoverEffectModal extends Modal {
     file: TFile
     plugin: PrettyPropertiesPlugin
     opacity: number
-    gradient: string
+    mosaic: number
 
     constructor(app: App, plugin: PrettyPropertiesPlugin, file: TFile) {
         super(app)
         this.plugin = plugin
         this.file = file
         this.opacity = 100
-        this.gradient = ""
+        this.mosaic = 0
 
         const frontmatter = plugin.app.metadataCache.getFileCache(file)?.frontmatter
         if (frontmatter) {
             const o = Number(getNestedProperty(frontmatter, plugin.settings.coverOpacityProperty))
             if (Number.isFinite(o)) this.opacity = o
-            const g = getNestedProperty(frontmatter, plugin.settings.coverMosaicProperty)
-            if (isCoverMosaic(g)) this.gradient = g
+            const m = Number(getNestedProperty(frontmatter, plugin.settings.coverMosaicProperty))
+            if (Number.isFinite(m)) this.mosaic = m
         }
     }
 
-    private write(prop: string, value: number | string, isDefault: boolean) {
+    private write(prop: string, value: number, isDefault: boolean) {
         void this.app.fileManager.processFrontMatter(this.file, (fm: FrontMatterCache) => {
             if (isDefault) deleteNestedProperty(fm, prop)
             else setNestedProperty(fm, prop, value)
@@ -56,17 +55,14 @@ export class CoverEffectModal extends Modal {
         new Setting(contentEl)
             .setName(i18n.t("COVER_MOSAIC"))
             .setDesc(i18n.t("COVER_MOSAIC_DESC"))
-            .addDropdown(dropdown => {
-                dropdown.addOption("", i18n.t("SCHEME_NONE"))
-                for (const name of COVER_MOSAICS) {
-                    dropdown.addOption(name, i18n.t(mosaicI18nKey(name)))
-                }
-                dropdown.setValue(this.gradient)
-                dropdown.onChange((value) => {
-                    this.gradient = value
-                    this.write(this.plugin.settings.coverMosaicProperty, value, value == "")
-                })
-            })
+            .addSlider(slider => slider
+                .setLimits(0, 64, 2)
+                .setValue(this.mosaic)
+                .setDynamicTooltip()
+                .onChange((value) => {
+                    this.mosaic = value
+                    this.write(this.plugin.settings.coverMosaicProperty, value, value == 0)
+                }))
     }
 
     onClose() {

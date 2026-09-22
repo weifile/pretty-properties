@@ -50,8 +50,7 @@ export interface PPPluginSettings {
 	coverYProperty: string;       // 封面取景：垂直位置属性名（0–100）
 	coverZoomProperty: string;    // 封面取景：放大倍数属性名（1–4）
 	coverOpacityProperty: string; // 封面效果：不透明度属性名（0–100）
-	coverMosaicProperty: string;// 封面效果：渐变色系属性名（purple / blue / teal / green / orange / pink / gray / sunset）
-	defaultCoverMosaic: string; // 笔记没有封面图时用来当封面的渐变色系（空 = 不显示）
+	coverMosaicProperty: string;  // 封面效果：马赛克属性名（横向格子数，0 = 关）
 	coverDefaultWidth1: number;
 	coverDefaultWidth2: number;
 	coverDefaultWidth3: number;
@@ -166,7 +165,6 @@ export const DEFAULT_SETTINGS: PPPluginSettings = {
 	coverZoomProperty: "cover_zoom",
 	coverOpacityProperty: "cover_opacity",
 	coverMosaicProperty: "cover_mosaic",
-	defaultCoverMosaic: "",
 	coverDefaultWidth1: 200,
 	coverDefaultWidth2: 250,
 	coverDefaultWidth3: 300,

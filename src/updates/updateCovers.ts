@@ -10,7 +10,7 @@ import { getNestedProperty, setNestedProperty } from "../utils/propertyUtils";
 import { CanvasView, EmbedMarkdownComponent, WidgetEditorView } from "@obsidian-typings/obsidian-public-latest";
 import { getImageValue, renderImageFromValue } from "../utils/imageUtils";
 import { getFormattedString } from "src/utils/formatUtils";
-import { CoverMosaic, isCoverMosaic, mosaicDataUrl } from "src/utils/coverMosaics";
+import { pixelateImage } from "src/utils/coverMosaics";
 
 
 
@@ -83,16 +83,8 @@ export const renderCover = async (
 
 	coverVal = getImageValue(coverVal)
 
-	const ownMosaic = getNestedProperty(frontmatter, plugin.settings.coverMosaicProperty)
-
-	if (isCoverMosaic(ownMosaic)) {
-		// The note asked for a gradient: it replaces the image entirely
-		coverDiv = createMosaicCover()
-	} else if (coverVal) {
+	if (coverVal) {
 		coverDiv = await renderImageFromValue(coverVal, "cover", sourcePath, component, plugin)
-	} else if (readCoverMosaic(frontmatter, plugin)) {
-		// No image at all: the default gradient from settings stands in as the cover
-		coverDiv = createMosaicCover()
 	}
 
 	if (coverDiv) {
@@ -115,7 +107,7 @@ export const renderCover = async (
 		} 
 
 		if (oldCoverDiv) {
-			if (coverDiv.outerHTML != oldCoverDiv.outerHTML) {
+			if (coverSignature(coverDiv) != coverSignature(oldCoverDiv)) {
 				oldCoverDiv.remove();
 				mdContainer.prepend(coverDiv);
 			}
@@ -131,6 +123,22 @@ export const renderCover = async (
 
 
 
+
+/**
+ * What a cover "is", for deciding whether an existing one can stay.
+ * Pixelation swaps the img src for a data URL asynchronously, so compare the original
+ * src instead (and the mosaic level, which is stored as data-mosaic on the cover).
+ */
+const coverSignature = (coverDiv: Element) => {
+	const clone = coverDiv.cloneNode(true) as HTMLElement
+	clone.querySelectorAll("img").forEach(img => {
+		const original = img.getAttribute("data-original-src")
+		if (original) img.setAttribute("src", original)
+		img.removeAttribute("data-original-src")
+		img.classList.remove("pp-pixelated")
+	})
+	return clone.outerHTML
+}
 
 const  applyCoverCssClasses = (
 	frontmatter: FrontMatterCache,
@@ -246,35 +254,9 @@ const applyCropStyles = (img: HTMLElement, crop: CoverCrop) => {
 	})
 }
 
-/** Mosaic scheme for this note: its own property, else the default from settings, else none */
-const readCoverMosaic = (frontmatter: FrontMatterCache, plugin: PrettyPropertiesPlugin): CoverMosaic | undefined => {
-	const own = getNestedProperty(frontmatter, plugin.settings.coverMosaicProperty)
-	if (isCoverMosaic(own)) return own
-	const def = plugin.settings.defaultCoverMosaic
-	return isCoverMosaic(def) ? def : undefined
-}
-
-/** A cover made of nothing but a mosaic block (same structure as an image cover, minus the img) */
-const createMosaicCover = () => {
-	const coverDiv = createDiv({ cls: ["pp-cover", "mode-mosaic"] })
-	const frame = createDiv({ cls: "pp-cover-frame" })
-	frame.appendChild(createDiv({ cls: ["pp-cover-image", "pp-cover-mosaic"] }))
-	coverDiv.appendChild(frame)
-	coverDiv.setAttribute("data-value", "")
-	return coverDiv
-}
-
 const applyCoverCrop = (frontmatter: FrontMatterCache, coverDiv: HTMLElement, plugin: PrettyPropertiesPlugin, sourcePath: string) => {
 	const frame = coverDiv.querySelector(".pp-cover-frame")
 	if (!(frame instanceof HTMLElement)) return
-
-	// Mosaic covers: paint a generated tile pattern on the frame. Seeded by the note path,
-	// so each note gets its own pattern and it stays the same every time.
-	if (coverDiv.classList.contains("mode-mosaic")) {
-		const scheme = readCoverMosaic(frontmatter, plugin)
-		frame.setCssStyles({ backgroundImage: scheme ? mosaicDataUrl(scheme, sourcePath) : "" })
-		frame.setAttribute("data-mosaic", scheme ?? "")
-	}
 
 	const img = frame.querySelector("img")
 	if (!(img instanceof HTMLImageElement)) return
@@ -282,9 +264,12 @@ const applyCoverCrop = (frontmatter: FrontMatterCache, coverDiv: HTMLElement, pl
 	coverDiv.setAttribute("data-crop", crop.x + "," + crop.y + "," + crop.z)
 	applyCropStyles(img, crop)
 
-	// Per-note opacity (0–100) on the image itself, so the gradient underneath shows through
+	// Per-note opacity (0–100) and mosaic (blocks across, 0 = off) on the image itself
 	const opacity = clamp(readNumber(frontmatter, plugin.settings.coverOpacityProperty, 100), 0, 100)
 	img.setCssStyles({ opacity: opacity < 100 ? String(opacity / 100) : "" })
+	const mosaic = clamp(readNumber(frontmatter, plugin.settings.coverMosaicProperty, 0), 0, 256)
+	coverDiv.setAttribute("data-mosaic", String(mosaic))
+	pixelateImage(img, mosaic)
 }
 
 const cropFromAttr = (coverDiv: HTMLElement): CoverCrop => {
@@ -409,7 +394,7 @@ export const updateCoverForView = (
   if (file) {
     let cache = plugin.app.metadataCache.getFileCache(file);
     // With a default cover image or gradient configured, notes without frontmatter still get one
-    const hasDefault = !!(plugin.settings.defaultCover || plugin.settings.defaultCoverMosaic)
+    const hasDefault = !!plugin.settings.defaultCover
     let frontmatter = cache?.frontmatter ?? (hasDefault ? ({} as FrontMatterCache) : undefined);
     let contentEl = view.containerEl;
     let sourcePath = view.file?.path || ""

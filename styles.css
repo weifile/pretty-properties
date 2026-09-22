@@ -406,15 +406,9 @@ body.is-mobile .pp-cover {
   max-width: 100%;
   margin-inline: auto;
 }
-/* Mosaic fill: painted on the frame as a generated SVG; the cover is just this block */
-.pp-cover-mosaic {
-  width: 100%;
-  aspect-ratio: 16 / 9;   /* shape rules (.pp-cover.<shape> .pp-cover-image) override this */
-}
-.pp-cover.mode-mosaic .pp-cover-frame {
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+/* Mosaic: the image is downscaled on a canvas and scaled back up without smoothing */
+.pp-cover-frame img.pp-pixelated {
+  image-rendering: pixelated;
 }
 
 .pp-cover.pp-cover-adjustable .pp-cover-frame img {
