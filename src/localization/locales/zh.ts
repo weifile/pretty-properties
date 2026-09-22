@@ -231,4 +231,7 @@ export default {
   PROPERTIES_AUTOHIDE_OFF: "属性区：已显示",
   AUTOHIDE_NO_HOVER: "鼠标悬停也不显示",
   AUTOHIDE_NO_HOVER_DESC: "自动隐藏后，鼠标移到横幅上也不显示属性区，只用「切换属性区自动隐藏」命令 / 快捷键来显示。",
+  TOGGLE_HOTKEY: "显示 / 隐藏属性区的快捷键",
+  TOGGLE_HOTKEY_DESC: "当前：",
+  CHANGE_HOTKEY: "修改",
 };

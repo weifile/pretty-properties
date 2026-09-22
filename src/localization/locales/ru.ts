@@ -242,4 +242,7 @@ export default {
   PROPERTIES_AUTOHIDE_OFF: "Properties block: shown",
   AUTOHIDE_NO_HOVER: "Do not reveal on hover",
   AUTOHIDE_NO_HOVER_DESC: "Keep the properties block hidden even when the mouse is over the banner. Use the \"Toggle properties block autohide\" command / hotkey to show it.",
+  TOGGLE_HOTKEY: "Hotkey for showing / hiding the properties block",
+  TOGGLE_HOTKEY_DESC: "Current: ",
+  CHANGE_HOTKEY: "Change",
 };

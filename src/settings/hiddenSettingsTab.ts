@@ -10,6 +10,10 @@ import {
     updateHidePropTitle 
 } from 'src/updates/updateStyles';
 import { showHiddenEmptySettings, showHiddenSettings } from './hiddenSettings';
+import { describeHotkey, openHotkeySettings } from 'src/utils/hotkeyUtils';
+
+// Obsidian prefixes command ids with the plugin id
+const TOGGLE_COMMAND_ID = "pretty-properties:toggle-properties-autohide"
 import { AddPropertyModal } from 'src/modals/settingItemModals';
 import { updateHiddenProperties } from 'src/updates/updateHiddenProperties';
 
@@ -93,6 +97,15 @@ export const getHiddenSettingsDefinitions = (tab: PPSettingTab) => {
                         await plugin.saveSettings();
                         updateAutoHideProps(plugin)
                     }));
+            }
+        },
+        {
+            name: i18n.t("TOGGLE_HOTKEY"),
+            description: i18n.t("TOGGLE_HOTKEY_DESC") + describeHotkey(plugin.app, TOGGLE_COMMAND_ID, "Ctrl+Shift+Z"),
+            render: (setting: Setting) => {
+                setting.addButton(btn => btn
+                    .setButtonText(i18n.t("CHANGE_HOTKEY"))
+                    .onClick(() => openHotkeySettings(plugin.app, i18n.t("TOGGLE_PROPERTIES_AUTOHIDE"))));
             }
         },
         {
@@ -276,6 +289,13 @@ export const showHiddenSettingsTab = (settingTab: PPSettingTab) => {
                 await plugin.saveSettings();
                 updateAutoHideProps(plugin)
             }));
+
+    new Setting(containerEl)
+        .setName(i18n.t("TOGGLE_HOTKEY"))
+        .setDesc(i18n.t("TOGGLE_HOTKEY_DESC") + describeHotkey(plugin.app, TOGGLE_COMMAND_ID, "Ctrl+Shift+Z"))
+        .addButton(btn => btn
+            .setButtonText(i18n.t("CHANGE_HOTKEY"))
+            .onClick(() => openHotkeySettings(plugin.app, i18n.t("TOGGLE_PROPERTIES_AUTOHIDE"))));
 
     new Setting(containerEl)
         .setName(i18n.t("HIDE_PROPERTIES_TITLE"))
