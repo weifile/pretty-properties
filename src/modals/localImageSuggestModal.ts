@@ -48,8 +48,12 @@ export class LocalImageSuggestModal extends SuggestModal<string> {
             el.classList.add("image-suggestion-item")
             el.classList.add(this.shape)
 
-            if (this.shape == "banner" || this.shape == "cover") {
+            if (this.shape == "banner") {
                 image.append(name)
+            } else if (this.shape == "cover") {
+                // Separate element so CSS can clamp the caption to the thumbnail width
+                image.createDiv({ cls: "pp-image-suggestion-name", text: name })
+                setTooltip(image, name, {delay: 100})
             } else {
                 setTooltip(image, name, {delay: 100})
             }

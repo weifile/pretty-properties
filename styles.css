@@ -796,8 +796,13 @@ body.is-mobile .pp-cover {
 }
 
 .image-suggestion-item.cover > div {
-  width: 0;            /* caption must not widen the item beyond the image */
-  min-width: 100%;
+  width: auto;         /* shrinks to the thumbnail: the caption below contributes no width */
+  max-width: 100%;
+}
+
+.image-suggestion-item.cover .pp-image-suggestion-name {
+  width: 0;            /* trick: takes no part in sizing the card... */
+  min-width: 100%;     /* ...then stretches to exactly the thumbnail width */
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
