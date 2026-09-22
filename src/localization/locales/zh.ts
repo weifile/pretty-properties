@@ -219,4 +219,7 @@ export default {
   WIDE_COVER: "宽版 16:9（裁切铺满）",
   WIDE_CONTAIN: "宽版 16:9（完整显示）",
   WIDE_COVER_WIDTH: "宽版（16:9）封面宽度",
+  ENABLE_COVER_DRAG: "拖动 / 缩放封面调整取景",
+  ENABLE_COVER_DRAG_DESC: "在封面上拖动可移动图片在框里的位置，Ctrl + 滚轮 放大缩小。取景参数存在 cover_x / cover_y / cover_zoom 三个属性里，网页可以按同样的参数裁切。",
+  RESET_COVER_CROP: "重置封面取景",
 };

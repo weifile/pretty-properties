@@ -54,6 +54,16 @@ export const handleCoverMenu = (menu: Menu, plugin: PrettyPropertiesPlugin) => {
             }))
 
             .addItem((item: MenuItem) => item
+                .setTitle(i18n.t("RESET_COVER_CROP"))
+                .setIcon("lucide-crop")
+                .setSection("pretty-properties")
+                .onClick(async () => {
+                    removeProperty(plugin.settings.coverXProperty, plugin);
+                    removeProperty(plugin.settings.coverYProperty, plugin);
+                    removeProperty(plugin.settings.coverZoomProperty, plugin);
+            }))
+
+            .addItem((item: MenuItem) => item
                 .setTitle(i18n.t("REMOVE_COVER"))
                 .setIcon("image-off")
                 .setSection("pretty-properties")
@@ -61,6 +71,9 @@ export const handleCoverMenu = (menu: Menu, plugin: PrettyPropertiesPlugin) => {
                     if (propName) removeProperty(propName, plugin);
                     removeProperty(plugin.settings.coverPositionProperty, plugin);
                     removeProperty(plugin.settings.coverShapeProperty, plugin);
+                    removeProperty(plugin.settings.coverXProperty, plugin);
+                    removeProperty(plugin.settings.coverYProperty, plugin);
+                    removeProperty(plugin.settings.coverZoomProperty, plugin);
             }))
 
 

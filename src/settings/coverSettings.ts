@@ -146,6 +146,19 @@ export const getCoverSettingsDefinitions = (tab: PPSettingTab) => {
                 });
             }
         }, {
+            name: i18n.t("ENABLE_COVER_DRAG"),
+            description: i18n.t("ENABLE_COVER_DRAG_DESC"),
+            visible: visible,
+            render: (setting: Setting) => {
+                setting.addToggle(toggle => toggle
+                    .setValue(plugin.settings.enableCoverDrag)
+                    .onChange(async (value) => {
+                        plugin.settings.enableCoverDrag = value
+                        await plugin.saveSettings();
+                        updateAllCovers(plugin);
+                    }));
+            }
+        }, {
             name: i18n.t("COVER_SHAPE_PROPERTY"),
             visible: visible,
             render: (setting: Setting) => {
@@ -645,6 +658,17 @@ export const showCoverSettings = (settingTab: PPSettingTab) => {
                 updateCoverStyles(plugin);
             })
         });
+
+        new Setting(containerEl)
+        .setName(i18n.t("ENABLE_COVER_DRAG"))
+        .setDesc(i18n.t("ENABLE_COVER_DRAG_DESC"))
+        .addToggle(toggle => toggle
+            .setValue(plugin.settings.enableCoverDrag)
+            .onChange(async (value) => {
+                plugin.settings.enableCoverDrag = value
+                await plugin.saveSettings();
+                updateAllCovers(plugin);
+            }));
 
 
 

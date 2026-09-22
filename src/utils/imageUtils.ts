@@ -221,7 +221,15 @@ const createImageWrapper = (imageItem: HTMLElement, value: string, imageMode: st
     if (type == "icon") return imageItem
 
     let imageDiv = createDiv();
-    imageDiv.appendChild(imageItem);
+
+    // Covers get a clipping frame so the image can be panned / zoomed inside it
+    if (type == "cover" && imageMode == "mode-image") {
+        const frame = createDiv({ cls: "pp-cover-frame" });
+        frame.appendChild(imageItem);
+        imageDiv.appendChild(frame);
+    } else {
+        imageDiv.appendChild(imageItem);
+    }
     imageDiv.classList.add("pp-" + type);
     imageDiv.classList.add(imageMode)
     imageDiv.setAttribute("data-value", value)

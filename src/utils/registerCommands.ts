@@ -151,6 +151,9 @@ export function registerCommands(plugin: PrettyPropertiesPlugin) {
 					removeProperty(currentCoverProp, plugin);
                     removeProperty(plugin.settings.coverPositionProperty, plugin);
                     removeProperty(plugin.settings.coverShapeProperty, plugin);
+                    removeProperty(plugin.settings.coverXProperty, plugin);
+                    removeProperty(plugin.settings.coverYProperty, plugin);
+                    removeProperty(plugin.settings.coverZoomProperty, plugin);
                 }
                 return true;
             }

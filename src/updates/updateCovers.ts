@@ -6,7 +6,7 @@ import {
 	TFile
 } from "obsidian";
 import PrettyPropertiesPlugin from "src/main";
-import { getNestedProperty } from "../utils/propertyUtils";
+import { getNestedProperty, setNestedProperty } from "../utils/propertyUtils";
 import { CanvasView, EmbedMarkdownComponent, WidgetEditorView } from "@obsidian-typings/obsidian-public-latest";
 import { getImageValue, renderImageFromValue } from "../utils/imageUtils";
 import { getFormattedString } from "src/utils/formatUtils";
@@ -88,6 +88,10 @@ export const renderCover = async (
 	
 	if (coverDiv) {
 		applyCoverCssClasses(frontmatter, coverDiv, mdContainer, contentEl, plugin);
+		applyCoverCrop(frontmatter, coverDiv, plugin);
+		if (!contentEl.classList.contains("hover-popover")) {
+			makeCoverAdjustable(coverDiv, sourcePath, plugin);
+		}
 
 
 		/* Remove all old covers again, because sometimes we get extra ones when the view is opened more then once */
@@ -197,6 +201,156 @@ const  applyCoverCssClasses = (
 
 
 
+
+
+
+
+
+/* ---------- Cover crop: pan (cover_x / cover_y, 0–100) and zoom (cover_zoom, 1–4) ---------- */
+
+interface CoverCrop { x: number; y: number; z: number }
+
+const clamp = (v: number, min: number, max: number) => Math.min(max, Math.max(min, v))
+
+const readNumber = (frontmatter: FrontMatterCache, prop: string, fallback: number) => {
+	const v = getNestedProperty(frontmatter, prop)
+	const n = typeof v == "number" ? v : Number(v)
+	return Number.isFinite(n) ? n : fallback
+}
+
+const readCoverCrop = (frontmatter: FrontMatterCache, plugin: PrettyPropertiesPlugin): CoverCrop => ({
+	x: clamp(readNumber(frontmatter, plugin.settings.coverXProperty, 50), 0, 100),
+	y: clamp(readNumber(frontmatter, plugin.settings.coverYProperty, 50), 0, 100),
+	z: clamp(readNumber(frontmatter, plugin.settings.coverZoomProperty, 1), 1, 4),
+})
+
+/**
+ * The crop is expressed as plain CSS so a website can reproduce it with the same three numbers:
+ *   object-fit: cover; object-position: X% Y%; transform: scale(Z); transform-origin: X% Y%;
+ * inside a clipping frame (overflow: hidden).
+ */
+const applyCropStyles = (img: HTMLElement, crop: CoverCrop) => {
+	img.setCssStyles({
+		objectPosition: crop.x + "% " + crop.y + "%",
+		transform: crop.z > 1 ? "scale(" + crop.z + ")" : "",
+		transformOrigin: crop.x + "% " + crop.y + "%",
+	})
+}
+
+const applyCoverCrop = (frontmatter: FrontMatterCache, coverDiv: HTMLElement, plugin: PrettyPropertiesPlugin) => {
+	const img = coverDiv.querySelector(".pp-cover-frame > img")
+	if (!(img instanceof HTMLImageElement)) return
+	const crop = readCoverCrop(frontmatter, plugin)
+	coverDiv.setAttribute("data-crop", crop.x + "," + crop.y + "," + crop.z)
+	applyCropStyles(img, crop)
+}
+
+const cropFromAttr = (coverDiv: HTMLElement): CoverCrop => {
+	const parts = (coverDiv.getAttribute("data-crop") || "").split(",").map(Number)
+	return {
+		x: Number.isFinite(parts[0]) ? parts[0]! : 50,
+		y: Number.isFinite(parts[1]) ? parts[1]! : 50,
+		z: Number.isFinite(parts[2]) ? parts[2]! : 1,
+	}
+}
+
+/**
+ * Drag to pan, Ctrl/Cmd + wheel to zoom. Values are written to the note's frontmatter,
+ * which re-renders the cover through the normal cache-changed path.
+ */
+const makeCoverAdjustable = (coverDiv: HTMLElement, sourcePath: string, plugin: PrettyPropertiesPlugin) => {
+	if (!plugin.settings.enableCoverDrag) return
+	const frame = coverDiv.querySelector(".pp-cover-frame")
+	const img = frame?.querySelector("img")
+	if (!(frame instanceof HTMLElement) || !(img instanceof HTMLImageElement)) return
+	if (coverDiv.classList.contains("pp-cover-adjustable")) return
+
+	coverDiv.classList.add("pp-cover-adjustable")
+	img.draggable = false
+
+	const DRAG_THRESHOLD = 3
+	const ZOOM_STEP = 1.1
+
+	const writeCrop = (crop: CoverCrop) => {
+		const file = plugin.app.vault.getFileByPath(sourcePath)
+		if (!file) return
+		void plugin.app.fileManager.processFrontMatter(file, (fm: FrontMatterCache) => {
+			setNestedProperty(fm, plugin.settings.coverXProperty, Math.round(crop.x))
+			setNestedProperty(fm, plugin.settings.coverYProperty, Math.round(crop.y))
+			setNestedProperty(fm, plugin.settings.coverZoomProperty, Math.round(crop.z * 100) / 100)
+		})
+	}
+
+	// How many px of image lie outside the frame on each axis, given object-fit: cover and the zoom
+	const overflowPx = (z: number) => {
+		const fw = frame.clientWidth || 1
+		const fh = frame.clientHeight || 1
+		const natW = img.naturalWidth || fw
+		const natH = img.naturalHeight || fh
+		const scale = Math.max(fw / natW, fh / natH) * z
+		return {
+			x: Math.max(1, natW * scale - fw),
+			y: Math.max(1, natH * scale - fh),
+		}
+	}
+
+	img.addEventListener("pointerdown", (e: PointerEvent) => {
+		if (e.button !== 0) return
+		const start = cropFromAttr(coverDiv)
+		const startX = e.clientX
+		const startY = e.clientY
+		let current: CoverCrop = { ...start }
+		let moved = false
+
+		const onMove = (ev: PointerEvent) => {
+			const dx = ev.clientX - startX
+			const dy = ev.clientY - startY
+			if (!moved && Math.abs(dx) < DRAG_THRESHOLD && Math.abs(dy) < DRAG_THRESHOLD) return
+			if (!moved) {
+				moved = true
+				coverDiv.classList.add("pp-cover-dragging")
+				img.setPointerCapture(e.pointerId)
+			}
+			const ov = overflowPx(start.z)
+			// Dragging right reveals more of the left side → smaller X; same for Y
+			current = {
+				x: clamp(start.x - dx * 100 / ov.x, 0, 100),
+				y: clamp(start.y - dy * 100 / ov.y, 0, 100),
+				z: start.z,
+			}
+			applyCropStyles(img, current)
+			ev.preventDefault()
+		}
+
+		const onUp = () => {
+			window.removeEventListener("pointermove", onMove)
+			window.removeEventListener("pointerup", onUp)
+			window.removeEventListener("pointercancel", onUp)
+			coverDiv.classList.remove("pp-cover-dragging")
+			if (!moved) return
+			coverDiv.setAttribute("data-crop", current.x + "," + current.y + "," + current.z)
+			writeCrop(current)
+		}
+
+		window.addEventListener("pointermove", onMove)
+		window.addEventListener("pointerup", onUp)
+		window.addEventListener("pointercancel", onUp)
+	})
+
+	let wheelTimer: number | undefined
+	img.addEventListener("wheel", (e: WheelEvent) => {
+		if (!(e.ctrlKey || e.metaKey)) return
+		e.preventDefault()
+		e.stopPropagation()
+		const crop = cropFromAttr(coverDiv)
+		const z = clamp(e.deltaY < 0 ? crop.z * ZOOM_STEP : crop.z / ZOOM_STEP, 1, 4)
+		const next: CoverCrop = { x: crop.x, y: crop.y, z: Math.round(z * 100) / 100 }
+		coverDiv.setAttribute("data-crop", next.x + "," + next.y + "," + next.z)
+		applyCropStyles(img, next)
+		if (wheelTimer) window.clearTimeout(wheelTimer)
+		wheelTimer = window.setTimeout(() => writeCrop(next), 400)
+	}, { passive: false })
+}
 
 
 

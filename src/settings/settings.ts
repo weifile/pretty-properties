@@ -45,6 +45,10 @@ export interface PPPluginSettings {
 	defaultCover: string;         // 笔记未设置封面时使用的默认图
 	enableBannerDrag: boolean;    // 允许在横幅上拖动调整取景位置
 	coverWideWidth: number;       // 16:9 宽版封面的宽度
+	enableCoverDrag: boolean;     // 允许在封面上拖动 / Ctrl+滚轮 调整取景
+	coverXProperty: string;       // 封面取景：水平位置属性名（0–100）
+	coverYProperty: string;       // 封面取景：垂直位置属性名（0–100）
+	coverZoomProperty: string;    // 封面取景：放大倍数属性名（1–4）
 	coverDefaultWidth1: number;
 	coverDefaultWidth2: number;
 	coverDefaultWidth3: number;
@@ -153,6 +157,10 @@ export const DEFAULT_SETTINGS: PPPluginSettings = {
 	defaultCover: "",
 	enableBannerDrag: true,
 	coverWideWidth: 320,
+	enableCoverDrag: true,
+	coverXProperty: "cover_x",
+	coverYProperty: "cover_y",
+	coverZoomProperty: "cover_zoom",
 	coverDefaultWidth1: 200,
 	coverDefaultWidth2: 250,
 	coverDefaultWidth3: 300,

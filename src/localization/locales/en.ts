@@ -220,4 +220,7 @@ export default {
   WIDE_COVER: "wide 16:9 (cover)",
   WIDE_CONTAIN: "wide 16:9 (contain)",
   WIDE_COVER_WIDTH: "Wide (16:9) cover width",
+  ENABLE_COVER_DRAG: "Drag / zoom cover to adjust crop",
+  ENABLE_COVER_DRAG_DESC: "Drag the cover to move the image inside its frame, Ctrl + mouse wheel to zoom in or out. The crop is stored in the cover_x / cover_y / cover_zoom properties, so a website can reproduce it.",
+  RESET_COVER_CROP: "Reset cover crop",
 };
