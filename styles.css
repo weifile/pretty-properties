@@ -781,15 +781,18 @@ body.is-mobile .pp-cover {
 
 
 
-/* Cover picker: landscape 16:9 thumbnails (covers are mostly photos), file name underneath */
+/* Cover picker: thumbnails share one height and keep each image's own orientation
+   (landscape stays wide, portrait stays narrow); very wide images are capped and cropped.
+   File name underneath, truncated to the thumbnail width. */
 .image-suggestion-item.cover {
-  width: 220px;
   display: inline-block;
   vertical-align: top;
+  width: auto;
 }
 
 .image-suggestion-item.cover > div {
-  max-width: 100%;
+  width: 0;            /* caption must not widen the item beyond the image */
+  min-width: 100%;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -799,9 +802,10 @@ body.is-mobile .pp-cover {
 }
 
 .image-suggestion-item.cover img {
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  height: auto;
+  height: 130px;
+  width: auto;
+  max-width: 240px;
+  min-width: 60px;
   object-fit: cover;
   border-radius: 6px;
   margin: 0 0 4px 0;
