@@ -30,6 +30,7 @@ export function registerCommands(plugin: PrettyPropertiesPlugin) {
     plugin.addCommand({
         id: "toggle-properties-autohide",
         name: i18n.t("TOGGLE_PROPERTIES_AUTOHIDE"),
+        hotkeys: [{ modifiers: ["Mod", "Shift"], key: "z" }],   // Ctrl+Shift+Z by default (changeable in Obsidian hotkeys)
         callback: async () => {
             plugin.settings.autoHidePropertiesWithBanner = !plugin.settings.autoHidePropertiesWithBanner;
             await plugin.saveSettings();
