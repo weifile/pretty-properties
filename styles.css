@@ -1533,6 +1533,16 @@ body:not(.show-hidden-properties) .hover-popover .metadata-property.is-empty.pp-
   padding-left: calc(var(--tag-padding-x) + 8px);
 }
 
+/* Link-type text values (Obsidian renders them as .metadata-link) line up with plain text values */
+.metadata-property-value > .metadata-link {
+  margin: 0 8px;
+  padding: 0;
+}
+.pp-pill-padding-all .metadata-property-value > .metadata-link {
+  padding-left: var(--tag-padding-x);
+  padding-right: var(--tag-padding-x);
+}
+
 
 
 
