@@ -223,4 +223,7 @@ export default {
   ENABLE_COVER_DRAG: "Drag / zoom cover to adjust crop",
   ENABLE_COVER_DRAG_DESC: "Drag the cover to move the image inside its frame, Ctrl + mouse wheel to zoom in or out. The crop is stored in the cover_x / cover_y / cover_zoom properties, so a website can reproduce it.",
   RESET_COVER_CROP: "Reset cover crop",
+  ADJUST_COVER_EFFECT: "Cover opacity / blur",
+  COVER_OPACITY: "Opacity (%)",
+  COVER_BLUR: "Blur (px)",
 };

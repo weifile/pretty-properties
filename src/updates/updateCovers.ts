@@ -243,6 +243,18 @@ const applyCoverCrop = (frontmatter: FrontMatterCache, coverDiv: HTMLElement, pl
 	const crop = readCoverCrop(frontmatter, plugin)
 	coverDiv.setAttribute("data-crop", crop.x + "," + crop.y + "," + crop.z)
 	applyCropStyles(img, crop)
+
+	// Per-note opacity (0–100) and blur (px) for covers whose image is not great.
+	// Blur is put on the frame (not the img) so it does not interfere with the crop transform.
+	const opacity = clamp(readNumber(frontmatter, plugin.settings.coverOpacityProperty, 100), 0, 100)
+	const blur = clamp(readNumber(frontmatter, plugin.settings.coverBlurProperty, 0), 0, 50)
+	const frame = img.parentElement
+	if (frame) {
+		frame.setCssStyles({
+			opacity: opacity < 100 ? String(opacity / 100) : "",
+			filter: blur > 0 ? "blur(" + blur + "px)" : "",
+		})
+	}
 }
 
 const cropFromAttr = (coverDiv: HTMLElement): CoverCrop => {

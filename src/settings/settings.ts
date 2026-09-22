@@ -49,6 +49,8 @@ export interface PPPluginSettings {
 	coverXProperty: string;       // 封面取景：水平位置属性名（0–100）
 	coverYProperty: string;       // 封面取景：垂直位置属性名（0–100）
 	coverZoomProperty: string;    // 封面取景：放大倍数属性名（1–4）
+	coverOpacityProperty: string; // 封面效果：不透明度属性名（0–100）
+	coverBlurProperty: string;    // 封面效果：模糊半径属性名（0–20 px）
 	coverDefaultWidth1: number;
 	coverDefaultWidth2: number;
 	coverDefaultWidth3: number;
@@ -161,6 +163,8 @@ export const DEFAULT_SETTINGS: PPPluginSettings = {
 	coverXProperty: "cover_x",
 	coverYProperty: "cover_y",
 	coverZoomProperty: "cover_zoom",
+	coverOpacityProperty: "cover_opacity",
+	coverBlurProperty: "cover_blur",
 	coverDefaultWidth1: 200,
 	coverDefaultWidth2: 250,
 	coverDefaultWidth3: 300,

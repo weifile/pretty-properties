@@ -6,6 +6,7 @@ import { getCurrentCoverProperty, selectCoverPosition } from "src/utils/imageUti
 import { selectCoverShape } from "src/utils/imageUtils";
 import { removeProperty } from "src/utils/propertyUtils";
 import { ImageSuggestModal } from "src/modals/imageSuggestModal";
+import { CoverEffectModal } from "src/modals/coverEffectModal";
 
 export const handleCoverMenu = (menu: Menu, plugin: PrettyPropertiesPlugin) => {
     
@@ -54,6 +55,14 @@ export const handleCoverMenu = (menu: Menu, plugin: PrettyPropertiesPlugin) => {
             }))
 
             .addItem((item: MenuItem) => item
+                .setTitle(i18n.t("ADJUST_COVER_EFFECT"))
+                .setIcon("lucide-sun-dim")
+                .setSection("pretty-properties")
+                .onClick(async () => {
+                    new CoverEffectModal(plugin.app, plugin, file).open();
+            }))
+
+            .addItem((item: MenuItem) => item
                 .setTitle(i18n.t("RESET_COVER_CROP"))
                 .setIcon("lucide-crop")
                 .setSection("pretty-properties")
@@ -74,6 +83,8 @@ export const handleCoverMenu = (menu: Menu, plugin: PrettyPropertiesPlugin) => {
                     removeProperty(plugin.settings.coverXProperty, plugin);
                     removeProperty(plugin.settings.coverYProperty, plugin);
                     removeProperty(plugin.settings.coverZoomProperty, plugin);
+                    removeProperty(plugin.settings.coverOpacityProperty, plugin);
+                    removeProperty(plugin.settings.coverBlurProperty, plugin);
             }))
 
 

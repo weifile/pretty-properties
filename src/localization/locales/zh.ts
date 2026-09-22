@@ -222,4 +222,7 @@ export default {
   ENABLE_COVER_DRAG: "拖动 / 缩放封面调整取景",
   ENABLE_COVER_DRAG_DESC: "在封面上拖动可移动图片在框里的位置，Ctrl + 滚轮 放大缩小。取景参数存在 cover_x / cover_y / cover_zoom 三个属性里，网页可以按同样的参数裁切。",
   RESET_COVER_CROP: "重置封面取景",
+  ADJUST_COVER_EFFECT: "封面透明度 / 模糊",
+  COVER_OPACITY: "不透明度（%）",
+  COVER_BLUR: "模糊（px）",
 };
