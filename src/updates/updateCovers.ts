@@ -264,10 +264,10 @@ const applyCoverCrop = (frontmatter: FrontMatterCache, coverDiv: HTMLElement, pl
 	coverDiv.setAttribute("data-crop", crop.x + "," + crop.y + "," + crop.z)
 	applyCropStyles(img, crop)
 
-	// Per-note opacity (0–100) and mosaic (blocks across, 0 = off) on the image itself
+	// Per-note opacity (0–100) and mosaic (block size in source px, 0 = off) on the image itself
 	const opacity = clamp(readNumber(frontmatter, plugin.settings.coverOpacityProperty, 100), 0, 100)
 	img.setCssStyles({ opacity: opacity < 100 ? String(opacity / 100) : "" })
-	const mosaic = clamp(readNumber(frontmatter, plugin.settings.coverMosaicProperty, 0), 0, 256)
+	const mosaic = clamp(readNumber(frontmatter, plugin.settings.coverMosaicProperty, 0), 0, 1000)
 	coverDiv.setAttribute("data-mosaic", String(mosaic))
 	pixelateImage(img, mosaic)
 }

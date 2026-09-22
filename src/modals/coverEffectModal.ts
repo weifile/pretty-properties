@@ -5,7 +5,7 @@ import { getNestedProperty, setNestedProperty, deleteNestedProperty } from "src/
 
 
 /**
- * Cover effect: opacity slider (cover_opacity, 0–100) and mosaic slider (cover_mosaic = blocks across, 0 = off).
+ * Cover effect: opacity slider (cover_opacity, 0–100) and mosaic slider (cover_mosaic = block size in source pixels, 0 = off).
  * Default values are removed from frontmatter again so notes stay clean.
  */
 export class CoverEffectModal extends Modal {
@@ -56,7 +56,7 @@ export class CoverEffectModal extends Modal {
             .setName(i18n.t("COVER_MOSAIC"))
             .setDesc(i18n.t("COVER_MOSAIC_DESC"))
             .addSlider(slider => slider
-                .setLimits(0, 64, 2)
+                .setLimits(0, 200, 1)
                 .setValue(this.mosaic)
                 .setDynamicTooltip()
                 .onChange((value) => {

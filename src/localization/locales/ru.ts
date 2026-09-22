@@ -236,5 +236,5 @@ export default {
   ADJUST_COVER_EFFECT: "Cover opacity / mosaic",
   COVER_OPACITY: "Opacity (%)",
   COVER_MOSAIC: "Mosaic",
-  COVER_MOSAIC_DESC: "Pixelates the cover image. Value = number of blocks across the image; 0 = off. Fewer blocks = coarser mosaic.",
+  COVER_MOSAIC_DESC: "Pixelates the cover image. Value = size of one block in source-image pixels; 0 = off. Bigger = coarser.",
 };

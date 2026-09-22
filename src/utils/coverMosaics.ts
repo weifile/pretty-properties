@@ -3,16 +3,16 @@
  * `tiles` pixels wide, and the browser scales that back up with nearest-neighbour
  * sampling (image-rendering: pixelated), which gives the blocky mosaic look.
  *
- * `tiles` = number of blocks across the image width (0 = off). The original src is
+ * `blockSize` = size of one mosaic block in source-image pixels (0 = off); bigger = coarser. The original src is
  * kept in data-original-src so the effect can be undone without re-rendering.
  * External images that taint the canvas are left untouched.
  */
-export const pixelateImage = (img: HTMLImageElement, tiles: number) => {
+export const pixelateImage = (img: HTMLImageElement, blockSize: number) => {
     const original = img.getAttribute("data-original-src") || img.src
     if (!original) return
     img.setAttribute("data-original-src", original)
 
-    if (!(tiles > 0)) {
+    if (!(blockSize > 0)) {
         if (img.src !== original) img.src = original
         img.classList.remove("pp-pixelated")
         return
@@ -22,8 +22,8 @@ export const pixelateImage = (img: HTMLImageElement, tiles: number) => {
         const src = new Image()
         src.crossOrigin = "anonymous"
         src.onload = () => {
-            const w = Math.max(1, Math.round(tiles))
-            const h = Math.max(1, Math.round(tiles * src.naturalHeight / src.naturalWidth))
+            const w = Math.max(1, Math.round(src.naturalWidth / blockSize))
+            const h = Math.max(1, Math.round(src.naturalHeight / blockSize))
             const canvas = document.createElement("canvas")
             canvas.width = w
             canvas.height = h

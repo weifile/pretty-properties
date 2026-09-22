@@ -225,5 +225,5 @@ export default {
   ADJUST_COVER_EFFECT: "封面效果（透明度 / 马赛克）",
   COVER_OPACITY: "不透明度（%）",
   COVER_MOSAIC: "马赛克",
-  COVER_MOSAIC_DESC: "把封面图打成马赛克。数值是横向的格子数，0 = 不打；格子越少越粗。",
+  COVER_MOSAIC_DESC: "把封面图打成马赛克。数值是每个格子的边长（按原图像素），0 = 不打；越大格子越粗越明显。",
 };
