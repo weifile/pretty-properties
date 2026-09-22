@@ -1,4 +1,4 @@
-import { TFile, CachedMetadata, MarkdownView, BasesView, HoverPopover, requireApiVersion } from "obsidian";
+import { TFile, CachedMetadata, MarkdownView, BasesView, HoverPopover, requireApiVersion, FrontMatterCache } from "obsidian";
 import PrettyPropertiesPlugin from "src/main";
 import { renderCover, updateCoverForView } from "./updateCovers";
 import { renderIcon, updateIconForView } from "./updateIcons";
@@ -299,8 +299,11 @@ export const updateImagesWithCacheForView = (cache: CachedMetadata, view: Markdo
         enableIcon = plugin.settings.enableIcon && plugin.settings.enableIconsInPopover
     }
     
-    if (frontmatter && getNestedProperty(frontmatter, plugin.settings.bannerProperty)  && enableBanner) {
-        void renderBanner(contentEl, frontmatter, sourcePath, view, plugin);
+    const hasBannerProp = !!(frontmatter && getNestedProperty(frontmatter, plugin.settings.bannerProperty))
+    const useDefaultBanner = !!plugin.settings.defaultBanner && type != "popover"
+
+    if ((hasBannerProp || useDefaultBanner) && enableBanner) {
+        void renderBanner(contentEl, frontmatter ?? ({} as FrontMatterCache), sourcePath, view, plugin);
     } else {
         let oldBannerDivSource = contentEl?.querySelector(".cm-scroller .pp-banner");
         let oldBannerDivPreview = contentEl?.querySelector(".markdown-reading-view > .markdown-preview-view .pp-banner");
@@ -320,8 +323,10 @@ export const updateImagesWithCacheForView = (cache: CachedMetadata, view: Markdo
         }
     }
 
-    if (frontmatter && hasCover && enableCover) {
-        void renderCover(view, contentEl, frontmatter, sourcePath, plugin);
+    const useDefaultCover = !!plugin.settings.defaultCover && type != "popover"
+
+    if ((hasCover || useDefaultCover) && enableCover) {
+        void renderCover(view, contentEl, frontmatter ?? ({} as FrontMatterCache), sourcePath, plugin);
     } else {
         let oldCoverDiv = contentEl?.querySelector(".pp-cover");
         oldCoverDiv?.remove();

@@ -116,6 +116,36 @@ export const getCoverSettingsDefinitions = (tab: PPSettingTab) => {
                 key: "coversFolder"
             }
         }, {
+            name: i18n.t("DEFAULT_COVER"),
+            description: i18n.t("DEFAULT_COVER_DESC"),
+            visible: visible,
+            render: (setting: Setting) => {
+                setting.addText(text => text
+                    .setPlaceholder('banner/hills.jpg')
+                    .setValue(plugin.settings.defaultCover)
+                    .onChange(async (value) => {
+                        plugin.settings.defaultCover = value.trim();
+                        await plugin.saveSettings();
+                        updateAllCovers(plugin);
+                    }));
+            }
+        }, {
+            name: i18n.t("COVER_RADIUS"),
+            visible: visible,
+            render: (setting: Setting) => {
+                setting.addText(text => {
+                    text.inputEl.type = "number"
+                    text.setValue(plugin.settings.coverRadius.toString())
+                    .setPlaceholder('0')
+                    .onChange(async (value) => {
+                        if (!value) value = "0"
+                        plugin.settings.coverRadius = Number(value);
+                        await plugin.saveSettings();
+                        updateCoverStyles(plugin);
+                    })
+                });
+            }
+        }, {
             name: i18n.t("COVER_SHAPE_PROPERTY"),
             visible: visible,
             render: (setting: Setting) => {
@@ -330,6 +360,23 @@ export const getCoverSettingsDefinitions = (tab: PPSettingTab) => {
             .onChange(async (value) => {
                 if (!value) value = "0"
                 plugin.settings.coverHorizontalWidth = Number(value);
+                await plugin.saveSettings();
+                updateCoverStyles(plugin);
+            })
+        });
+
+            }
+        }, {
+            name: i18n.t("WIDE_COVER_WIDTH"),
+            visible: visible,
+            render: (setting: Setting) => {
+                setting.addText(text => {
+            text.inputEl.type = "number"
+            text.setValue(plugin.settings.coverWideWidth.toString())
+            .setPlaceholder('320')
+            .onChange(async (value) => {
+                if (!value) value = "0"
+                plugin.settings.coverWideWidth = Number(value);
                 await plugin.saveSettings();
                 updateCoverStyles(plugin);
             })
@@ -573,6 +620,32 @@ export const showCoverSettings = (settingTab: PPSettingTab) => {
                 await plugin.saveSettings();
             }));
 
+        new Setting(containerEl)
+        .setName(i18n.t("DEFAULT_COVER"))
+        .setDesc(i18n.t("DEFAULT_COVER_DESC"))
+        .addText(text => text
+            .setPlaceholder('banner/hills.jpg')
+            .setValue(plugin.settings.defaultCover)
+            .onChange(async (value) => {
+                plugin.settings.defaultCover = value.trim();
+                await plugin.saveSettings();
+                updateAllCovers(plugin);
+            }));
+
+        new Setting(containerEl)
+        .setName(i18n.t("COVER_RADIUS"))
+        .addText(text => {
+            text.inputEl.type = "number"
+            text.setValue(plugin.settings.coverRadius.toString())
+            .setPlaceholder('0')
+            .onChange(async (value) => {
+                if (!value) value = "0"
+                plugin.settings.coverRadius = Number(value);
+                await plugin.saveSettings();
+                updateCoverStyles(plugin);
+            })
+        });
+
 
 
         let coverShapePlaceholder = "cover_shape"
@@ -774,6 +847,20 @@ export const showCoverSettings = (settingTab: PPSettingTab) => {
             .onChange(async (value) => {
                 if (!value) value = "0"
                 plugin.settings.coverHorizontalWidth = Number(value);
+                await plugin.saveSettings();
+                updateCoverStyles(plugin);
+            })
+        });
+
+        new Setting(containerEl)
+        .setName(i18n.t("WIDE_COVER_WIDTH"))
+        .addText(text => {
+            text.inputEl.type = "number"
+            text.setValue(plugin.settings.coverWideWidth.toString())
+            .setPlaceholder('320')
+            .onChange(async (value) => {
+                if (!value) value = "0"
+                plugin.settings.coverWideWidth = Number(value);
                 await plugin.saveSettings();
                 updateCoverStyles(plugin);
             })

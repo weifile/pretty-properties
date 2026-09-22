@@ -81,6 +81,67 @@ export const getBannerSettingsDefinitions = (tab: PPSettingTab) => {
                         plugin.settings.bannerFading = value
                         await plugin.saveSettings();
                         updateBannerStyles(plugin);
+                        if (requireApiVersion("1.13.0")) {
+                            tab.update()
+                        }
+                    }));
+            }
+        }, {
+            name: i18n.t("BANNER_FADE_START"),
+            description: i18n.t("BANNER_FADE_START_DESC"),
+            visible: visible && plugin.settings.bannerFading,
+            render: (setting: Setting) => {
+                setting.addSlider(slider => slider
+                    .setLimits(0, 100, 1)
+                    .setValue(plugin.settings.bannerFadeStart)
+                    .setDynamicTooltip()
+                    .onChange(async (value) => {
+                        plugin.settings.bannerFadeStart = value;
+                        await plugin.saveSettings();
+                        updateBannerStyles(plugin);
+                    }));
+            }
+        }, {
+            name: i18n.t("BANNER_RADIUS"),
+            visible: visible,
+            render: (setting: Setting) => {
+                setting.addText(text => {
+                    text.inputEl.type = "number"
+                    text.setValue(plugin.settings.bannerRadius.toString())
+                    .setPlaceholder('10')
+                    .onChange(async (value) => {
+                        if (!value) value = "0"
+                        plugin.settings.bannerRadius = Number(value);
+                        await plugin.saveSettings();
+                        updateBannerStyles(plugin);
+                    })
+                });
+            }
+        }, {
+            name: i18n.t("DEFAULT_BANNER"),
+            description: i18n.t("DEFAULT_BANNER_DESC"),
+            visible: visible,
+            render: (setting: Setting) => {
+                setting.addText(text => text
+                    .setPlaceholder('banner/hills.jpg')
+                    .setValue(plugin.settings.defaultBanner)
+                    .onChange(async (value) => {
+                        plugin.settings.defaultBanner = value.trim();
+                        await plugin.saveSettings();
+                        updateAllBanners(plugin);
+                    }));
+            }
+        }, {
+            name: i18n.t("ENABLE_BANNER_DRAG"),
+            description: i18n.t("ENABLE_BANNER_DRAG_DESC"),
+            visible: visible,
+            render: (setting: Setting) => {
+                setting.addToggle(toggle => toggle
+                    .setValue(plugin.settings.enableBannerDrag)
+                    .onChange(async (value) => {
+                        plugin.settings.enableBannerDrag = value
+                        await plugin.saveSettings();
+                        updateAllBanners(plugin);
                     }));
             }
         }, {
@@ -280,6 +341,59 @@ export const showBannerSettings = (settingTab: PPSettingTab) => {
                 plugin.settings.bannerFading = value
                 await plugin.saveSettings();
                 updateBannerStyles(plugin);
+                settingTab.display();
+            }));
+
+        if (plugin.settings.bannerFading) {
+            new Setting(containerEl)
+            .setName(i18n.t("BANNER_FADE_START"))
+            .setDesc(i18n.t("BANNER_FADE_START_DESC"))
+            .addSlider(slider => slider
+                .setLimits(0, 100, 1)
+                .setValue(plugin.settings.bannerFadeStart)
+                .setDynamicTooltip()
+                .onChange(async (value) => {
+                    plugin.settings.bannerFadeStart = value;
+                    await plugin.saveSettings();
+                    updateBannerStyles(plugin);
+                }));
+        }
+
+        new Setting(containerEl)
+        .setName(i18n.t("BANNER_RADIUS"))
+        .addText(text => {
+            text.inputEl.type = "number"
+            text.setValue(plugin.settings.bannerRadius.toString())
+            .setPlaceholder('10')
+            .onChange(async (value) => {
+                if (!value) value = "0"
+                plugin.settings.bannerRadius = Number(value);
+                await plugin.saveSettings();
+                updateBannerStyles(plugin);
+            })
+        });
+
+        new Setting(containerEl)
+        .setName(i18n.t("DEFAULT_BANNER"))
+        .setDesc(i18n.t("DEFAULT_BANNER_DESC"))
+        .addText(text => text
+            .setPlaceholder('banner/hills.jpg')
+            .setValue(plugin.settings.defaultBanner)
+            .onChange(async (value) => {
+                plugin.settings.defaultBanner = value.trim();
+                await plugin.saveSettings();
+                updateAllBanners(plugin);
+            }));
+
+        new Setting(containerEl)
+        .setName(i18n.t("ENABLE_BANNER_DRAG"))
+        .setDesc(i18n.t("ENABLE_BANNER_DRAG_DESC"))
+        .addToggle(toggle => toggle
+            .setValue(plugin.settings.enableBannerDrag)
+            .onChange(async (value) => {
+                plugin.settings.enableBannerDrag = value
+                await plugin.saveSettings();
+                updateAllBanners(plugin);
             }));
 
 

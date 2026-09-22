@@ -4,6 +4,26 @@ import { getTextLightness } from "./updatePills";
 import { updateHiddenProperties } from "./updateHiddenProperties";
 
 
+/**
+ * Build the bottom-fade mask for banners.
+ * `start` (0–100) is the point below which the image starts to fade.
+ * The stops follow an ease curve (slow → fast → slow) instead of a straight line,
+ * because a linear alpha ramp looks like a hard edge near the bottom.
+ */
+const buildFadeGradient = (start: number) => {
+    if (!Number.isFinite(start)) start = 25;
+    start = Math.min(100, Math.max(0, start));
+    const span = 100 - start;
+    const stop = (t: number) => (start + span * t).toFixed(2) + "%";
+    return "linear-gradient(to bottom, " +
+        "black " + stop(0) + ", " +
+        "rgba(0,0,0,0.90) " + stop(0.2) + ", " +
+        "rgba(0,0,0,0.66) " + stop(0.4) + ", " +
+        "rgba(0,0,0,0.38) " + stop(0.6) + ", " +
+        "rgba(0,0,0,0.14) " + stop(0.8) + ", " +
+        "transparent 100%)";
+}
+
 export const updateBannerStyles = (plugin: PrettyPropertiesPlugin) => {
     let bannerHeight = plugin.settings.bannerHeight;
     let bannerMargin = plugin.settings.bannerMargin;
@@ -13,13 +33,14 @@ export const updateBannerStyles = (plugin: PrettyPropertiesPlugin) => {
     } 
     let bannerFading = "none";
     if (plugin.settings.bannerFading) {
-        bannerFading = "linear-gradient(to bottom, black 25%, transparent)";
+        bannerFading = buildFadeGradient(plugin.settings.bannerFadeStart);
     }
     let bannerProps = {
         "--banner-height": bannerHeight + "px",
         "--banner-height-popover": plugin.settings.bannerHeightPopover + "px",
         "--banner-margin": bannerMargin + "px",
-        "--banner-fading": bannerFading
+        "--banner-fading": bannerFading,
+        "--banner-radius": plugin.settings.bannerRadius + "px"
     };
     document.body.setCssProps(bannerProps);
 }
@@ -94,7 +115,9 @@ export const updateCoverStyles = (plugin: PrettyPropertiesPlugin) => {
     "--cover-width-square": plugin.settings.coverSquareWidth + "px",
     "--cover-width-circle": plugin.settings.coverCircleWidth + "px",
     "--cover-max-width-popover": plugin.settings.coverMaxWidthPopover + "px",
-    "--cover-max-width-canvas": plugin.settings.coverMaxWidthCanvas + "px"
+    "--cover-max-width-canvas": plugin.settings.coverMaxWidthCanvas + "px",
+    "--cover-width-wide": plugin.settings.coverWideWidth + "px",
+    "--cover-radius": plugin.settings.coverRadius + "px"
     }
   document.body.setCssProps(coverProps);
 

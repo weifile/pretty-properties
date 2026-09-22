@@ -75,6 +75,11 @@ export const renderCover = async (
 		}
 	}
 
+	// Fall back to the default cover from settings when the note has none
+	if (!coverVal && plugin.settings.defaultCover) {
+		coverVal = plugin.settings.defaultCover
+	}
+
 	coverVal = getImageValue(coverVal)
 
 	if (coverVal) {
@@ -147,6 +152,8 @@ const  applyCoverCssClasses = (
 		"vertical-contain",
 		"horizontal-cover",
 		"horizontal-contain",
+		"wide-cover",
+		"wide-contain",
 		"square",
 		"circle"
 	]
@@ -205,7 +212,8 @@ export const updateCoverForView = (
   let file = view.file
   if (file) {
     let cache = plugin.app.metadataCache.getFileCache(file);
-    let frontmatter = cache?.frontmatter;
+    // With a default cover configured, notes without frontmatter still get one
+    let frontmatter = cache?.frontmatter ?? (plugin.settings.defaultCover ? ({} as FrontMatterCache) : undefined);
     let contentEl = view.containerEl;
     let sourcePath = view.file?.path || ""
     if (frontmatter) {

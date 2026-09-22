@@ -41,10 +41,20 @@
     max-width: 100%;
     height: var(--banner-height);
     object-fit: cover;
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
+    border-top-left-radius: var(--banner-radius, 10px);
+    border-top-right-radius: var(--banner-radius, 10px);
 	mask-image: var(--banner-fading);
 	-webkit-mask-image: var(--banner-fading);
+}
+
+/* Drag to reposition */
+.pp-banner.pp-banner-draggable img {
+    cursor: grab;
+    user-select: none;
+    -webkit-user-drag: none;
+}
+.pp-banner.pp-banner-dragging img {
+    cursor: grabbing;
 }
 
 
@@ -380,6 +390,7 @@ body.is-mobile .pp-cover {
   width: 100%;
   max-height: 100%;
   object-fit: cover;
+  border-radius: var(--cover-radius, 0px);
 }
 
 .pp-cover.left .pp-cover-image,
@@ -481,6 +492,33 @@ body.is-mobile .pp-cover {
   max-height: min(75cqw, var(--cover-max-height-top-bottom));
 }
 
+
+
+
+/* Wide (16:9) */
+
+.metadata-container.has-cover.wide-cover,
+.metadata-container.has-cover.wide-contain {
+  --cover-column-width: var(--cover-width-wide);
+}
+
+.pp-cover.wide-cover .pp-cover-image,
+.pp-cover.wide-contain .pp-cover-image {
+  aspect-ratio: 16/9;
+}
+
+.pp-cover.wide-contain .pp-cover-image {
+  object-fit: contain;
+}
+
+.pp-cover.wide-cover.top .pp-cover-image,
+.pp-cover.wide-contain.top .pp-cover-image,
+.pp-cover.wide-cover.bottom .pp-cover-image,
+.pp-cover.wide-contain.bottom .pp-cover-image {
+  width: 100%;
+  aspect-ratio: unset;
+  max-height: min(56.25cqw, var(--cover-max-height-top-bottom));
+}
 
 
 

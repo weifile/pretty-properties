@@ -21,6 +21,8 @@ export class CoverShapeSuggestModal extends SuggestModal<string> {
             "vertical-contain": i18n.t("VERTICAL_CONTAIN"),
             "horizontal-cover": i18n.t("HORIZONTAL_COVER"),
             "horizontal-contain": i18n.t("HORIZONTAL_CONTAIN"),
+            "wide-cover": i18n.t("WIDE_COVER"),
+            "wide-contain": i18n.t("WIDE_CONTAIN"),
             square: i18n.t("SQUARE"),
             circle: i18n.t("CIRCLE"),
         };

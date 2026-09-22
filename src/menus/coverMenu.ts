@@ -12,7 +12,9 @@ export const handleCoverMenu = (menu: Menu, plugin: PrettyPropertiesPlugin) => {
     let file = plugin.app.workspace.getActiveFile();
 
     if (file instanceof TFile) {
-        let propName = getCurrentCoverProperty(plugin);
+        // When the note shows the default cover it has no cover property yet;
+        // use the first configured one so the menu still works
+        let propName = getCurrentCoverProperty(plugin) || plugin.settings.coverProperties[0]?.property;
         let coverPositionPropName = plugin.settings.coverPositionProperty
         let coverShapePropName = plugin.settings.coverShapeProperty
 

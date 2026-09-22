@@ -38,6 +38,13 @@ export interface PPPluginSettings {
     bannerMargin: number;
 	bannerMarginMobile: number;
     bannerFading: boolean;
+	bannerFadeStart: number;      // 渐隐起点（0-100，图片顶部到此处完全清晰）
+	bannerRadius: number;         // 横幅顶部圆角（px）
+	coverRadius: number;          // 封面圆角（px）
+	defaultBanner: string;        // 笔记未设置横幅时使用的默认图（库内路径或链接，空 = 不用默认图）
+	defaultCover: string;         // 笔记未设置封面时使用的默认图
+	enableBannerDrag: boolean;    // 允许在横幅上拖动调整取景位置
+	coverWideWidth: number;       // 16:9 宽版封面的宽度
 	coverDefaultWidth1: number;
 	coverDefaultWidth2: number;
 	coverDefaultWidth3: number;
@@ -139,6 +146,13 @@ export const DEFAULT_SETTINGS: PPPluginSettings = {
     bannerMargin: -20,
 	bannerMarginMobile: 0,
     bannerFading: true,
+	bannerFadeStart: 25,
+	bannerRadius: 10,
+	coverRadius: 0,
+	defaultBanner: "",
+	defaultCover: "",
+	enableBannerDrag: true,
+	coverWideWidth: 320,
 	coverDefaultWidth1: 200,
 	coverDefaultWidth2: 250,
 	coverDefaultWidth3: 300,
