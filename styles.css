@@ -592,6 +592,13 @@ body.is-mobile .pp-cover {
 
 @container (width < 600px) {
 
+  /* Narrow pane: Obsidian keeps the property label column at a fixed 9em, which leaves
+     so little room for values that tag pills break mid-word. Shrink the label column
+     so a pill can stay on one line. */
+  .metadata-container:not(.in-canvas, .in-popover) {
+    --metadata-label-width: 6em;
+  }
+
   .metadata-container:not(.in-canvas, .in-popover).has-cover.left,
   .metadata-container:not(.in-canvas, .in-popover).has-cover.right {
     grid-template-columns: auto;
