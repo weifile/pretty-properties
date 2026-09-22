@@ -229,4 +229,6 @@ export default {
   TOGGLE_PROPERTIES_AUTOHIDE: "切换属性区自动隐藏（显示 / 隐藏）",
   PROPERTIES_AUTOHIDE_ON: "属性区：已隐藏（鼠标移到横幅顶部会显示）",
   PROPERTIES_AUTOHIDE_OFF: "属性区：已显示",
+  AUTOHIDE_NO_HOVER: "鼠标悬停也不显示",
+  AUTOHIDE_NO_HOVER_DESC: "自动隐藏后，鼠标移到横幅上也不显示属性区，只用「切换属性区自动隐藏」命令 / 快捷键来显示。",
 };

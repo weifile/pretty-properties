@@ -81,7 +81,20 @@ export const getHiddenSettingsDefinitions = (tab: PPSettingTab) => {
                         updateAutoHideProps(plugin)
                     }));
             }
-        }, 
+        },
+        {
+            name: i18n.t("AUTOHIDE_NO_HOVER"),
+            description: i18n.t("AUTOHIDE_NO_HOVER_DESC"),
+            render: (setting: Setting) => {
+                setting.addToggle(toggle => toggle
+                    .setValue(plugin.settings.autoHideNoHover)
+                    .onChange(async (value) => {
+                        plugin.settings.autoHideNoHover = value
+                        await plugin.saveSettings();
+                        updateAutoHideProps(plugin)
+                    }));
+            }
+        },
         {
             name: i18n.t("HIDE_PROPERTIES_TITLE"),
             render: (setting: Setting) => {
@@ -253,7 +266,16 @@ export const showHiddenSettingsTab = (settingTab: PPSettingTab) => {
                 updateAutoHideProps(plugin)
             }));
 
-
+    new Setting(containerEl)
+        .setName(i18n.t("AUTOHIDE_NO_HOVER"))
+        .setDesc(i18n.t("AUTOHIDE_NO_HOVER_DESC"))
+        .addToggle(toggle => toggle
+            .setValue(plugin.settings.autoHideNoHover)
+            .onChange(async (value) => {
+                plugin.settings.autoHideNoHover = value
+                await plugin.saveSettings();
+                updateAutoHideProps(plugin)
+            }));
 
     new Setting(containerEl)
         .setName(i18n.t("HIDE_PROPERTIES_TITLE"))

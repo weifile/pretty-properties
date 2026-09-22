@@ -186,6 +186,17 @@
   transition-delay: 0.3s;
 }
 
+/* "No hover" variant: the block stays hidden even under the mouse; only the toggle command shows it */
+.pp-autohide-no-hover.autohide-props-with-banner .has-banner > .markdown-source-view > .cm-editor > .cm-scroller .metadata-container,
+.pp-autohide-no-hover.autohide-props-with-banner .has-banner > .markdown-reading-view > .markdown-preview-view .metadata-container {
+  opacity: 0;
+  pointer-events: none;
+}
+.pp-autohide-no-hover.autohide-props-with-banner .has-banner > .markdown-source-view > .cm-editor > .cm-scroller .metadata-container .metadata-content,
+.pp-autohide-no-hover.autohide-props-with-banner .has-banner > .markdown-reading-view > .markdown-preview-view .metadata-container .metadata-content {
+  max-height: 0;
+}
+
 
 
 

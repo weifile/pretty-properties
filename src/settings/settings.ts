@@ -119,6 +119,7 @@ export interface PPPluginSettings {
 	hideMetadataContainerIfAllPropertiesHiddenEditing: boolean;
 	hideMetadataContainerIfAllPropertiesHiddenReading: boolean;
 	autoHidePropertiesWithBanner: boolean;
+	autoHideNoHover: boolean;     // 自动隐藏时鼠标悬停也不显示，只靠命令 / 快捷键切换
 	hideCoverCollapsed: boolean;
 	hidePropTitle: boolean;
 	hideAddPropertyButton: boolean;
@@ -247,6 +248,7 @@ export const DEFAULT_SETTINGS: PPPluginSettings = {
 	hideMetadataContainerIfAllPropertiesHiddenEditing: false,
 	hideMetadataContainerIfAllPropertiesHiddenReading: false,
 	autoHidePropertiesWithBanner: false,
+	autoHideNoHover: false,
 	hideCoverCollapsed: false,
 	hidePropTitle: false,
 	hideAddPropertyButton: false,

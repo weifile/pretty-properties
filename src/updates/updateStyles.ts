@@ -301,6 +301,7 @@ export const updateHiddenMetadataContainer = (plugin: PrettyPropertiesPlugin) =>
 export const updateAutoHideProps = (plugin: PrettyPropertiesPlugin) => {
   let autoHidePropertiesWithBanner = plugin.settings.autoHidePropertiesWithBanner
   document.body.classList.toggle("autohide-props-with-banner", autoHidePropertiesWithBanner)
+  document.body.classList.toggle("pp-autohide-no-hover", autoHidePropertiesWithBanner && plugin.settings.autoHideNoHover)
 }
 
 
