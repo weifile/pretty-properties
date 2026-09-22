@@ -83,10 +83,15 @@ export const renderCover = async (
 
 	coverVal = getImageValue(coverVal)
 
-	if (coverVal) {
+	const ownGradient = getNestedProperty(frontmatter, plugin.settings.coverGradientProperty)
+
+	if (isCoverGradient(ownGradient)) {
+		// The note asked for a gradient: it replaces the image entirely
+		coverDiv = createGradientCover()
+	} else if (coverVal) {
 		coverDiv = await renderImageFromValue(coverVal, "cover", sourcePath, component, plugin)
 	} else if (readCoverGradient(frontmatter, plugin)) {
-		// No image at all: a gradient block stands in as the cover
+		// No image at all: the default gradient from settings stands in as the cover
 		coverDiv = createGradientCover()
 	}
 
@@ -263,11 +268,12 @@ const applyCoverCrop = (frontmatter: FrontMatterCache, coverDiv: HTMLElement, pl
 	const frame = coverDiv.querySelector(".pp-cover-frame")
 	if (!(frame instanceof HTMLElement)) return
 
-	// Gradient fill: painted on the frame, behind the image. Visible when the image is
-	// translucent, or as the whole cover when there is no image.
+	// Gradient covers: paint the chosen scheme on the frame (image covers get no gradient)
 	for (const name of COVER_GRADIENTS) frame.classList.remove("pp-gradient-" + name)
-	const gradient = readCoverGradient(frontmatter, plugin)
-	if (gradient) frame.classList.add("pp-gradient-" + gradient)
+	if (coverDiv.classList.contains("mode-gradient")) {
+		const gradient = readCoverGradient(frontmatter, plugin)
+		if (gradient) frame.classList.add("pp-gradient-" + gradient)
+	}
 
 	const img = frame.querySelector("img")
 	if (!(img instanceof HTMLImageElement)) return

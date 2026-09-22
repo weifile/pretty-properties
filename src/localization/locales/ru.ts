@@ -236,7 +236,7 @@ export default {
   ADJUST_COVER_EFFECT: "Cover opacity / gradient",
   COVER_OPACITY: "Opacity (%)",
   COVER_GRADIENT: "Gradient fill",
-  COVER_GRADIENT_DESC: "Shown behind the image (visible when opacity is lowered) or as the cover itself when the note has no image.",
+  COVER_GRADIENT_DESC: "Replaces the image: the cover becomes a gradient block in this color scheme. Choose none to show the image again.",
   DEFAULT_COVER_GRADIENT: "Default cover gradient",
   DEFAULT_COVER_GRADIENT_DESC: "When a note has neither a cover property nor a default cover image, show a gradient block in this color scheme instead. None = no cover.",
   GRADIENT_NONE: "none",

@@ -225,7 +225,7 @@ export default {
   ADJUST_COVER_EFFECT: "封面效果（透明度 / 渐变）",
   COVER_OPACITY: "不透明度（%）",
   COVER_GRADIENT: "渐变填充",
-  COVER_GRADIENT_DESC: "垫在图片底下（降低不透明度时能看到），笔记没有图时就直接当封面。",
+  COVER_GRADIENT_DESC: "选了色系后封面不再显示图片，直接用这个色系的渐变块当封面；选「无」恢复显示图片。",
   DEFAULT_COVER_GRADIENT: "默认封面渐变",
   DEFAULT_COVER_GRADIENT_DESC: "笔记既没有封面属性、也没设默认封面图时，用这个色系的渐变块当封面。无 = 不显示封面。",
   GRADIENT_NONE: "无",
