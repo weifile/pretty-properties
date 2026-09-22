@@ -228,7 +228,7 @@ export default {
   COVER_MOSAIC: "Mosaic",
   COVER_MOSAIC_DESC: "Pixelates the cover image. Value = size of one block in source-image pixels; 0 = off. Bigger = coarser.",
   TOGGLE_PROPERTIES_AUTOHIDE: "Toggle properties block autohide (show / hide)",
-  PROPERTIES_AUTOHIDE_ON: "Properties block: hidden (shows on hover over the banner)",
+  PROPERTIES_AUTOHIDE_ON: "Properties block: hidden",
   PROPERTIES_AUTOHIDE_OFF: "Properties block: shown",
   AUTOHIDE_NO_HOVER: "Do not reveal on hover",
   AUTOHIDE_NO_HOVER_DESC: "Keep the properties block hidden even when the mouse is over the banner. Use the \"Toggle properties block autohide\" command / hotkey to show it.",
