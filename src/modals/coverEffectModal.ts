@@ -2,6 +2,7 @@ import { TFile, Modal, Setting, App, FrontMatterCache } from "obsidian";
 import PrettyPropertiesPlugin from "src/main";
 import { i18n } from "src/localization/localization";
 import { getNestedProperty, setNestedProperty, deleteNestedProperty } from "src/utils/propertyUtils";
+import { makeModalDraggable } from "src/utils/draggableModal";
 
 
 /**
@@ -39,7 +40,8 @@ export class CoverEffectModal extends Modal {
 
     onOpen() {
         const { contentEl } = this
-        contentEl.createEl("h3", { text: i18n.t("ADJUST_COVER_EFFECT") })
+        const title = contentEl.createEl("h3", { text: i18n.t("ADJUST_COVER_EFFECT") })
+        makeModalDraggable(this, title)
 
         new Setting(contentEl)
             .setName(i18n.t("COVER_OPACITY"))

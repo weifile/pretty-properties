@@ -1,6 +1,8 @@
 import { TFile, Modal, Setting, App, FrontMatterCache } from "obsidian";
 import PrettyPropertiesPlugin from "src/main";
 import { getNestedProperty, setNestedProperty } from "src/utils/propertyUtils";
+import { makeModalDraggable } from "src/utils/draggableModal";
+import { i18n } from "src/localization/localization";
 
 
 export class BannerPositionModal extends Modal {
@@ -26,6 +28,8 @@ export class BannerPositionModal extends Modal {
 
     onOpen() {
         const {contentEl} = this
+        const title = contentEl.createEl("h3", { text: i18n.t("SELECT_BANNER_POSITION") })
+        makeModalDraggable(this, title)
         let positionSetting = new Setting(contentEl)
         .addSlider(slider => slider
             .setLimits(0, 100, 1)

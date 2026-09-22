@@ -2113,3 +2113,20 @@ button.cover-has-format {
 .metadata-property button.pp-property-select-button:hover {
   opacity: 1;
 }
+
+
+/* DRAGGABLE MODALS (cover effect, banner position): movable by the title, see-through backdrop */
+
+.pp-see-through-modal .modal-bg {
+  opacity: 0;
+}
+
+.pp-draggable-modal {
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+}
+
+.pp-draggable-modal .pp-modal-drag-handle {
+  cursor: move;
+  user-select: none;
+  margin-top: 0;
+}
