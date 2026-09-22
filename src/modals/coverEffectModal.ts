@@ -2,37 +2,38 @@ import { TFile, Modal, Setting, App, FrontMatterCache } from "obsidian";
 import PrettyPropertiesPlugin from "src/main";
 import { i18n } from "src/localization/localization";
 import { getNestedProperty, setNestedProperty, deleteNestedProperty } from "src/utils/propertyUtils";
+import { COVER_GRADIENTS, gradientI18nKey, isCoverGradient } from "src/utils/coverGradients";
 
 
 /**
- * Two sliders that write cover_opacity (0–100) and cover_blur (0–20 px) to the note.
+ * Cover effect: opacity slider (cover_opacity, 0–100) and gradient fill dropdown (cover_gradient).
  * Default values are removed from frontmatter again so notes stay clean.
  */
 export class CoverEffectModal extends Modal {
     file: TFile
     plugin: PrettyPropertiesPlugin
     opacity: number
-    blur: number
+    gradient: string
 
     constructor(app: App, plugin: PrettyPropertiesPlugin, file: TFile) {
         super(app)
         this.plugin = plugin
         this.file = file
         this.opacity = 100
-        this.blur = 0
+        this.gradient = ""
 
         const frontmatter = plugin.app.metadataCache.getFileCache(file)?.frontmatter
         if (frontmatter) {
             const o = Number(getNestedProperty(frontmatter, plugin.settings.coverOpacityProperty))
-            const b = Number(getNestedProperty(frontmatter, plugin.settings.coverBlurProperty))
             if (Number.isFinite(o)) this.opacity = o
-            if (Number.isFinite(b)) this.blur = b
+            const g = getNestedProperty(frontmatter, plugin.settings.coverGradientProperty)
+            if (isCoverGradient(g)) this.gradient = g
         }
     }
 
-    private write(prop: string, value: number, defaultValue: number) {
+    private write(prop: string, value: number | string, isDefault: boolean) {
         void this.app.fileManager.processFrontMatter(this.file, (fm: FrontMatterCache) => {
-            if (value == defaultValue) deleteNestedProperty(fm, prop)
+            if (isDefault) deleteNestedProperty(fm, prop)
             else setNestedProperty(fm, prop, value)
         })
     }
@@ -49,19 +50,23 @@ export class CoverEffectModal extends Modal {
                 .setDynamicTooltip()
                 .onChange((value) => {
                     this.opacity = value
-                    this.write(this.plugin.settings.coverOpacityProperty, value, 100)
+                    this.write(this.plugin.settings.coverOpacityProperty, value, value == 100)
                 }))
 
         new Setting(contentEl)
-            .setName(i18n.t("COVER_BLUR"))
-            .addSlider(slider => slider
-                .setLimits(0, 20, 1)
-                .setValue(this.blur)
-                .setDynamicTooltip()
-                .onChange((value) => {
-                    this.blur = value
-                    this.write(this.plugin.settings.coverBlurProperty, value, 0)
-                }))
+            .setName(i18n.t("COVER_GRADIENT"))
+            .setDesc(i18n.t("COVER_GRADIENT_DESC"))
+            .addDropdown(dropdown => {
+                dropdown.addOption("", i18n.t("GRADIENT_NONE"))
+                for (const name of COVER_GRADIENTS) {
+                    dropdown.addOption(name, i18n.t(gradientI18nKey(name)))
+                }
+                dropdown.setValue(this.gradient)
+                dropdown.onChange((value) => {
+                    this.gradient = value
+                    this.write(this.plugin.settings.coverGradientProperty, value, value == "")
+                })
+            })
     }
 
     onClose() {

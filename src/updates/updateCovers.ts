@@ -10,6 +10,7 @@ import { getNestedProperty, setNestedProperty } from "../utils/propertyUtils";
 import { CanvasView, EmbedMarkdownComponent, WidgetEditorView } from "@obsidian-typings/obsidian-public-latest";
 import { getImageValue, renderImageFromValue } from "../utils/imageUtils";
 import { getFormattedString } from "src/utils/formatUtils";
+import { COVER_GRADIENTS, CoverGradient, isCoverGradient } from "src/utils/coverGradients";
 
 
 
@@ -84,8 +85,11 @@ export const renderCover = async (
 
 	if (coverVal) {
 		coverDiv = await renderImageFromValue(coverVal, "cover", sourcePath, component, plugin)
+	} else if (readCoverGradient(frontmatter, plugin)) {
+		// No image at all: a gradient block stands in as the cover
+		coverDiv = createGradientCover()
 	}
-	
+
 	if (coverDiv) {
 		applyCoverCssClasses(frontmatter, coverDiv, mdContainer, contentEl, plugin);
 		applyCoverCrop(frontmatter, coverDiv, plugin);
@@ -237,24 +241,43 @@ const applyCropStyles = (img: HTMLElement, crop: CoverCrop) => {
 	})
 }
 
+/** Gradient scheme for this note: its own property, else the default from settings, else none */
+const readCoverGradient = (frontmatter: FrontMatterCache, plugin: PrettyPropertiesPlugin): CoverGradient | undefined => {
+	const own = getNestedProperty(frontmatter, plugin.settings.coverGradientProperty)
+	if (isCoverGradient(own)) return own
+	const def = plugin.settings.defaultCoverGradient
+	return isCoverGradient(def) ? def : undefined
+}
+
+/** A cover made of nothing but a gradient block (same structure as an image cover, minus the img) */
+const createGradientCover = () => {
+	const coverDiv = createDiv({ cls: ["pp-cover", "mode-gradient"] })
+	const frame = createDiv({ cls: "pp-cover-frame" })
+	frame.appendChild(createDiv({ cls: ["pp-cover-image", "pp-cover-gradient"] }))
+	coverDiv.appendChild(frame)
+	coverDiv.setAttribute("data-value", "")
+	return coverDiv
+}
+
 const applyCoverCrop = (frontmatter: FrontMatterCache, coverDiv: HTMLElement, plugin: PrettyPropertiesPlugin) => {
-	const img = coverDiv.querySelector(".pp-cover-frame > img")
+	const frame = coverDiv.querySelector(".pp-cover-frame")
+	if (!(frame instanceof HTMLElement)) return
+
+	// Gradient fill: painted on the frame, behind the image. Visible when the image is
+	// translucent, or as the whole cover when there is no image.
+	for (const name of COVER_GRADIENTS) frame.classList.remove("pp-gradient-" + name)
+	const gradient = readCoverGradient(frontmatter, plugin)
+	if (gradient) frame.classList.add("pp-gradient-" + gradient)
+
+	const img = frame.querySelector("img")
 	if (!(img instanceof HTMLImageElement)) return
 	const crop = readCoverCrop(frontmatter, plugin)
 	coverDiv.setAttribute("data-crop", crop.x + "," + crop.y + "," + crop.z)
 	applyCropStyles(img, crop)
 
-	// Per-note opacity (0–100) and blur (px) for covers whose image is not great.
-	// Blur is put on the frame (not the img) so it does not interfere with the crop transform.
+	// Per-note opacity (0–100) on the image itself, so the gradient underneath shows through
 	const opacity = clamp(readNumber(frontmatter, plugin.settings.coverOpacityProperty, 100), 0, 100)
-	const blur = clamp(readNumber(frontmatter, plugin.settings.coverBlurProperty, 0), 0, 50)
-	const frame = img.parentElement
-	if (frame) {
-		frame.setCssStyles({
-			opacity: opacity < 100 ? String(opacity / 100) : "",
-			filter: blur > 0 ? "blur(" + blur + "px)" : "",
-		})
-	}
+	img.setCssStyles({ opacity: opacity < 100 ? String(opacity / 100) : "" })
 }
 
 const cropFromAttr = (coverDiv: HTMLElement): CoverCrop => {
@@ -378,8 +401,9 @@ export const updateCoverForView = (
   let file = view.file
   if (file) {
     let cache = plugin.app.metadataCache.getFileCache(file);
-    // With a default cover configured, notes without frontmatter still get one
-    let frontmatter = cache?.frontmatter ?? (plugin.settings.defaultCover ? ({} as FrontMatterCache) : undefined);
+    // With a default cover image or gradient configured, notes without frontmatter still get one
+    const hasDefault = !!(plugin.settings.defaultCover || plugin.settings.defaultCoverGradient)
+    let frontmatter = cache?.frontmatter ?? (hasDefault ? ({} as FrontMatterCache) : undefined);
     let contentEl = view.containerEl;
     let sourcePath = view.file?.path || ""
     if (frontmatter) {

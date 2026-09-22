@@ -10,6 +10,7 @@ import {enhanceFormatTextArea} from "../utils/settingsHelper";
 
 import { AddPropertyModal, FormatTemplateModal } from 'src/modals/settingItemModals';
 import { ConfirmModal } from 'src/modals/confirmModal';
+import { COVER_GRADIENTS, gradientI18nKey } from 'src/utils/coverGradients';
 
 
 
@@ -128,6 +129,24 @@ export const getCoverSettingsDefinitions = (tab: PPSettingTab) => {
                         await plugin.saveSettings();
                         updateAllCovers(plugin);
                     }));
+            }
+        }, {
+            name: i18n.t("DEFAULT_COVER_GRADIENT"),
+            description: i18n.t("DEFAULT_COVER_GRADIENT_DESC"),
+            visible: visible,
+            render: (setting: Setting) => {
+                setting.addDropdown(dropdown => {
+                    dropdown.addOption("", i18n.t("GRADIENT_NONE"))
+                    for (const name of COVER_GRADIENTS) {
+                        dropdown.addOption(name, i18n.t(gradientI18nKey(name)))
+                    }
+                    dropdown.setValue(plugin.settings.defaultCoverGradient)
+                    dropdown.onChange(async (value) => {
+                        plugin.settings.defaultCoverGradient = value;
+                        await plugin.saveSettings();
+                        updateAllCovers(plugin);
+                    })
+                });
             }
         }, {
             name: i18n.t("COVER_RADIUS"),
@@ -644,6 +663,22 @@ export const showCoverSettings = (settingTab: PPSettingTab) => {
                 await plugin.saveSettings();
                 updateAllCovers(plugin);
             }));
+
+        new Setting(containerEl)
+        .setName(i18n.t("DEFAULT_COVER_GRADIENT"))
+        .setDesc(i18n.t("DEFAULT_COVER_GRADIENT_DESC"))
+        .addDropdown(dropdown => {
+            dropdown.addOption("", i18n.t("GRADIENT_NONE"))
+            for (const name of COVER_GRADIENTS) {
+                dropdown.addOption(name, i18n.t(gradientI18nKey(name)))
+            }
+            dropdown.setValue(plugin.settings.defaultCoverGradient)
+            dropdown.onChange(async (value) => {
+                plugin.settings.defaultCoverGradient = value;
+                await plugin.saveSettings();
+                updateAllCovers(plugin);
+            })
+        });
 
         new Setting(containerEl)
         .setName(i18n.t("COVER_RADIUS"))
