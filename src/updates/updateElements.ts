@@ -323,8 +323,8 @@ export const updateImagesWithCacheForView = (cache: CachedMetadata, view: Markdo
         }
     }
 
-    const hasGradientProp = !!(frontmatter && getNestedProperty(frontmatter, plugin.settings.coverGradientProperty))
-    const useDefaultCover = !!(plugin.settings.defaultCover || plugin.settings.defaultCoverGradient || hasGradientProp) && type != "popover"
+    const hasMosaicProp = !!(frontmatter && getNestedProperty(frontmatter, plugin.settings.coverMosaicProperty))
+    const useDefaultCover = !!(plugin.settings.defaultCover || plugin.settings.defaultCoverMosaic || hasMosaicProp) && type != "popover"
 
     if ((hasCover || useDefaultCover) && enableCover) {
         void renderCover(view, contentEl, frontmatter ?? ({} as FrontMatterCache), sourcePath, plugin);

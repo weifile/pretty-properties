@@ -406,66 +406,15 @@ body.is-mobile .pp-cover {
   max-width: 100%;
   margin-inline: auto;
 }
-/* Gradient fill: painted on the frame behind the image; a cover with no image is just this block */
-.pp-cover-gradient {
+/* Mosaic fill: painted on the frame as a generated SVG; the cover is just this block */
+.pp-cover-mosaic {
   width: 100%;
   aspect-ratio: 16 / 9;   /* shape rules (.pp-cover.<shape> .pp-cover-image) override this */
 }
-.pp-cover-frame.pp-gradient-purple {
-  background:
-    radial-gradient(ellipse 70% 60% at 18% 28%, #C4A6FF 0%, transparent 65%),
-    radial-gradient(ellipse 60% 70% at 82% 18%, #F28BB5 0%, transparent 60%),
-    radial-gradient(ellipse 80% 60% at 65% 88%, #5B3FA8 0%, transparent 62%),
-    linear-gradient(135deg, #7A57D9 0%, #221448 100%);
-}
-.pp-cover-frame.pp-gradient-blue {
-  background:
-    radial-gradient(ellipse 70% 60% at 18% 28%, #8FB8FF 0%, transparent 65%),
-    radial-gradient(ellipse 60% 70% at 82% 18%, #5FE3D9 0%, transparent 60%),
-    radial-gradient(ellipse 80% 60% at 65% 88%, #2F4FB8 0%, transparent 62%),
-    linear-gradient(135deg, #3F6EDB 0%, #101C48 100%);
-}
-.pp-cover-frame.pp-gradient-teal {
-  background:
-    radial-gradient(ellipse 70% 60% at 18% 28%, #7FE8DC 0%, transparent 65%),
-    radial-gradient(ellipse 60% 70% at 82% 18%, #B5F2A8 0%, transparent 60%),
-    radial-gradient(ellipse 80% 60% at 65% 88%, #1F7F78 0%, transparent 62%),
-    linear-gradient(135deg, #2FA79A 0%, #0C3634 100%);
-}
-.pp-cover-frame.pp-gradient-green {
-  background:
-    radial-gradient(ellipse 70% 60% at 18% 28%, #A8E88C 0%, transparent 65%),
-    radial-gradient(ellipse 60% 70% at 82% 18%, #E6F58A 0%, transparent 60%),
-    radial-gradient(ellipse 80% 60% at 65% 88%, #2E7A40 0%, transparent 62%),
-    linear-gradient(135deg, #4FA85C 0%, #15361D 100%);
-}
-.pp-cover-frame.pp-gradient-orange {
-  background:
-    radial-gradient(ellipse 70% 60% at 18% 28%, #FFD08A 0%, transparent 65%),
-    radial-gradient(ellipse 60% 70% at 82% 18%, #FF7A59 0%, transparent 60%),
-    radial-gradient(ellipse 80% 60% at 65% 88%, #B8541E 0%, transparent 62%),
-    linear-gradient(135deg, #F0923A 0%, #5E2A0C 100%);
-}
-.pp-cover-frame.pp-gradient-pink {
-  background:
-    radial-gradient(ellipse 70% 60% at 18% 28%, #FFB6D6 0%, transparent 65%),
-    radial-gradient(ellipse 60% 70% at 82% 18%, #C58CFF 0%, transparent 60%),
-    radial-gradient(ellipse 80% 60% at 65% 88%, #B03E77 0%, transparent 62%),
-    linear-gradient(135deg, #E5679B 0%, #4E1536 100%);
-}
-.pp-cover-frame.pp-gradient-gray {
-  background:
-    radial-gradient(ellipse 70% 60% at 18% 28%, #D0D0D0 0%, transparent 65%),
-    radial-gradient(ellipse 60% 70% at 82% 18%, #9AA3B2 0%, transparent 60%),
-    radial-gradient(ellipse 80% 60% at 65% 88%, #5A5A5A 0%, transparent 62%),
-    linear-gradient(135deg, #7A7A7A 0%, #1E1E1E 100%);
-}
-.pp-cover-frame.pp-gradient-sunset {
-  background:
-    radial-gradient(ellipse 70% 60% at 18% 28%, #FFB347 0%, transparent 65%),
-    radial-gradient(ellipse 60% 70% at 82% 18%, #F28BB5 0%, transparent 60%),
-    radial-gradient(ellipse 80% 60% at 65% 88%, #9F70FF 0%, transparent 62%),
-    linear-gradient(135deg, #7A4FD0 0%, #221448 100%);
+.pp-cover.mode-mosaic .pp-cover-frame {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 .pp-cover.pp-cover-adjustable .pp-cover-frame img {

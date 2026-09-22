@@ -10,7 +10,7 @@ import { getNestedProperty, setNestedProperty } from "../utils/propertyUtils";
 import { CanvasView, EmbedMarkdownComponent, WidgetEditorView } from "@obsidian-typings/obsidian-public-latest";
 import { getImageValue, renderImageFromValue } from "../utils/imageUtils";
 import { getFormattedString } from "src/utils/formatUtils";
-import { COVER_GRADIENTS, CoverGradient, isCoverGradient } from "src/utils/coverGradients";
+import { CoverMosaic, isCoverMosaic, mosaicDataUrl } from "src/utils/coverMosaics";
 
 
 
@@ -83,21 +83,21 @@ export const renderCover = async (
 
 	coverVal = getImageValue(coverVal)
 
-	const ownGradient = getNestedProperty(frontmatter, plugin.settings.coverGradientProperty)
+	const ownMosaic = getNestedProperty(frontmatter, plugin.settings.coverMosaicProperty)
 
-	if (isCoverGradient(ownGradient)) {
+	if (isCoverMosaic(ownMosaic)) {
 		// The note asked for a gradient: it replaces the image entirely
-		coverDiv = createGradientCover()
+		coverDiv = createMosaicCover()
 	} else if (coverVal) {
 		coverDiv = await renderImageFromValue(coverVal, "cover", sourcePath, component, plugin)
-	} else if (readCoverGradient(frontmatter, plugin)) {
+	} else if (readCoverMosaic(frontmatter, plugin)) {
 		// No image at all: the default gradient from settings stands in as the cover
-		coverDiv = createGradientCover()
+		coverDiv = createMosaicCover()
 	}
 
 	if (coverDiv) {
 		applyCoverCssClasses(frontmatter, coverDiv, mdContainer, contentEl, plugin);
-		applyCoverCrop(frontmatter, coverDiv, plugin);
+		applyCoverCrop(frontmatter, coverDiv, plugin, sourcePath);
 		if (!contentEl.classList.contains("hover-popover")) {
 			makeCoverAdjustable(coverDiv, sourcePath, plugin);
 		}
@@ -246,33 +246,34 @@ const applyCropStyles = (img: HTMLElement, crop: CoverCrop) => {
 	})
 }
 
-/** Gradient scheme for this note: its own property, else the default from settings, else none */
-const readCoverGradient = (frontmatter: FrontMatterCache, plugin: PrettyPropertiesPlugin): CoverGradient | undefined => {
-	const own = getNestedProperty(frontmatter, plugin.settings.coverGradientProperty)
-	if (isCoverGradient(own)) return own
-	const def = plugin.settings.defaultCoverGradient
-	return isCoverGradient(def) ? def : undefined
+/** Mosaic scheme for this note: its own property, else the default from settings, else none */
+const readCoverMosaic = (frontmatter: FrontMatterCache, plugin: PrettyPropertiesPlugin): CoverMosaic | undefined => {
+	const own = getNestedProperty(frontmatter, plugin.settings.coverMosaicProperty)
+	if (isCoverMosaic(own)) return own
+	const def = plugin.settings.defaultCoverMosaic
+	return isCoverMosaic(def) ? def : undefined
 }
 
-/** A cover made of nothing but a gradient block (same structure as an image cover, minus the img) */
-const createGradientCover = () => {
-	const coverDiv = createDiv({ cls: ["pp-cover", "mode-gradient"] })
+/** A cover made of nothing but a mosaic block (same structure as an image cover, minus the img) */
+const createMosaicCover = () => {
+	const coverDiv = createDiv({ cls: ["pp-cover", "mode-mosaic"] })
 	const frame = createDiv({ cls: "pp-cover-frame" })
-	frame.appendChild(createDiv({ cls: ["pp-cover-image", "pp-cover-gradient"] }))
+	frame.appendChild(createDiv({ cls: ["pp-cover-image", "pp-cover-mosaic"] }))
 	coverDiv.appendChild(frame)
 	coverDiv.setAttribute("data-value", "")
 	return coverDiv
 }
 
-const applyCoverCrop = (frontmatter: FrontMatterCache, coverDiv: HTMLElement, plugin: PrettyPropertiesPlugin) => {
+const applyCoverCrop = (frontmatter: FrontMatterCache, coverDiv: HTMLElement, plugin: PrettyPropertiesPlugin, sourcePath: string) => {
 	const frame = coverDiv.querySelector(".pp-cover-frame")
 	if (!(frame instanceof HTMLElement)) return
 
-	// Gradient covers: paint the chosen scheme on the frame (image covers get no gradient)
-	for (const name of COVER_GRADIENTS) frame.classList.remove("pp-gradient-" + name)
-	if (coverDiv.classList.contains("mode-gradient")) {
-		const gradient = readCoverGradient(frontmatter, plugin)
-		if (gradient) frame.classList.add("pp-gradient-" + gradient)
+	// Mosaic covers: paint a generated tile pattern on the frame. Seeded by the note path,
+	// so each note gets its own pattern and it stays the same every time.
+	if (coverDiv.classList.contains("mode-mosaic")) {
+		const scheme = readCoverMosaic(frontmatter, plugin)
+		frame.setCssStyles({ backgroundImage: scheme ? mosaicDataUrl(scheme, sourcePath) : "" })
+		frame.setAttribute("data-mosaic", scheme ?? "")
 	}
 
 	const img = frame.querySelector("img")
@@ -408,7 +409,7 @@ export const updateCoverForView = (
   if (file) {
     let cache = plugin.app.metadataCache.getFileCache(file);
     // With a default cover image or gradient configured, notes without frontmatter still get one
-    const hasDefault = !!(plugin.settings.defaultCover || plugin.settings.defaultCoverGradient)
+    const hasDefault = !!(plugin.settings.defaultCover || plugin.settings.defaultCoverMosaic)
     let frontmatter = cache?.frontmatter ?? (hasDefault ? ({} as FrontMatterCache) : undefined);
     let contentEl = view.containerEl;
     let sourcePath = view.file?.path || ""

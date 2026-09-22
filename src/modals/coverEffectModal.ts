@@ -2,7 +2,7 @@ import { TFile, Modal, Setting, App, FrontMatterCache } from "obsidian";
 import PrettyPropertiesPlugin from "src/main";
 import { i18n } from "src/localization/localization";
 import { getNestedProperty, setNestedProperty, deleteNestedProperty } from "src/utils/propertyUtils";
-import { COVER_GRADIENTS, gradientI18nKey, isCoverGradient } from "src/utils/coverGradients";
+import { COVER_MOSAICS, mosaicI18nKey, isCoverMosaic } from "src/utils/coverMosaics";
 
 
 /**
@@ -26,8 +26,8 @@ export class CoverEffectModal extends Modal {
         if (frontmatter) {
             const o = Number(getNestedProperty(frontmatter, plugin.settings.coverOpacityProperty))
             if (Number.isFinite(o)) this.opacity = o
-            const g = getNestedProperty(frontmatter, plugin.settings.coverGradientProperty)
-            if (isCoverGradient(g)) this.gradient = g
+            const g = getNestedProperty(frontmatter, plugin.settings.coverMosaicProperty)
+            if (isCoverMosaic(g)) this.gradient = g
         }
     }
 
@@ -54,17 +54,17 @@ export class CoverEffectModal extends Modal {
                 }))
 
         new Setting(contentEl)
-            .setName(i18n.t("COVER_GRADIENT"))
-            .setDesc(i18n.t("COVER_GRADIENT_DESC"))
+            .setName(i18n.t("COVER_MOSAIC"))
+            .setDesc(i18n.t("COVER_MOSAIC_DESC"))
             .addDropdown(dropdown => {
-                dropdown.addOption("", i18n.t("GRADIENT_NONE"))
-                for (const name of COVER_GRADIENTS) {
-                    dropdown.addOption(name, i18n.t(gradientI18nKey(name)))
+                dropdown.addOption("", i18n.t("SCHEME_NONE"))
+                for (const name of COVER_MOSAICS) {
+                    dropdown.addOption(name, i18n.t(mosaicI18nKey(name)))
                 }
                 dropdown.setValue(this.gradient)
                 dropdown.onChange((value) => {
                     this.gradient = value
-                    this.write(this.plugin.settings.coverGradientProperty, value, value == "")
+                    this.write(this.plugin.settings.coverMosaicProperty, value, value == "")
                 })
             })
     }
