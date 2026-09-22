@@ -1,12 +1,15 @@
 import { getLanguage, requireApiVersion } from 'obsidian';
 import en from 'src/localization/locales/en';
 import ru from 'src/localization/locales/ru';
+import zh from 'src/localization/locales/zh';
 
 type LocaleObj = Record<string, string>
 
 const locales: Record<string, LocaleObj> = {
   en,
-  ru
+  ru,
+  zh,
+  "zh-TW": zh
 };
 
 export class LocalizationService {
