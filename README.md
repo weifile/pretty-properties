@@ -294,3 +294,40 @@ There are couple of the extra features added mostly to reuse the existing code. 
 1. Commands in command pallette to insert a local image or an emoji into a note. Let you chose an image or emoji from the visual selection menu, the same as used when you select a cover or an icon.
 
 2. When you right-click on an inline tag in a note in the editor menu added the option to quickly delete the tag.
+
+---
+
+# 自用版说明（weifile/pretty-properties）
+
+本仓库从 anareaty/pretty-properties 2.0.12 分出，**独立发展，不再同步上游**。改了什么、改在哪个文件，全部记录在 [改动记录.md](改动记录.md)。
+
+## 从源码安装 / 恢复
+
+```bash
+git clone https://github.com/weifile/pretty-properties.git
+cd pretty-properties
+npm install
+npm run build
+```
+
+构建产物是仓库根目录的 `main.js`、`styles.css`，加上 `manifest.json`，把这三个文件复制到库的插件目录：
+
+```
+<你的库>/.obsidian/plugins/pretty-properties/
+```
+
+然后在 Obsidian 里按 **Ctrl+R** 重载（插件代码和样式是启动时读进内存的，不重载看不到变化），到 设置 → 社区插件 里确认版本号是 2.1.0 及以上、开关已打开。
+
+## 改代码后的日常流程
+
+1. 改 `src/` 或 `styles.css`
+2. `npm run build`
+3. 复制 `main.js`、`styles.css` 到库的插件目录（改了 `manifest.json` 就一起复制）
+4. Obsidian 按 Ctrl+R
+5. 往 `改动记录.md` 记一笔，提交推送
+
+## 注意
+
+- **不要在 Obsidian 社区插件里点这个插件的「更新」**，会被商店的版本覆盖。本仓库把版本号定为 2.1.0（高于商店的 2.0.12）就是为了不弹更新提示；如果将来商店版本追上来了，再往上改版本号。
+- 界面文字在 `src/localization/locales/` 下，中文是 `zh.ts`；加新文字时 `en.ts`、`ru.ts`、`zh.ts` 三个表都要加同名键。
+- 设置页每个文件里有两套渲染代码（Obsidian 新旧 API 各一套），加设置项两处都要改。
