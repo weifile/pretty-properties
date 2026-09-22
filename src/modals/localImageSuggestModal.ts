@@ -48,7 +48,7 @@ export class LocalImageSuggestModal extends SuggestModal<string> {
             el.classList.add("image-suggestion-item")
             el.classList.add(this.shape)
 
-            if (this.shape == "banner") {
+            if (this.shape == "banner" || this.shape == "cover") {
                 image.append(name)
             } else {
                 setTooltip(image, name, {delay: 100})
