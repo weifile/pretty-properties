@@ -616,6 +616,18 @@ body.is-mobile .pp-cover {
 
 @container (width < 600px) {
 
+  /* Tag pills wrap as whole blocks: never break a tag mid-word, move the whole pill
+     to the next line instead. Only tags longer than the whole row get an ellipsis. */
+  .metadata-container:not(.in-canvas, .in-popover) .multi-select-pill {
+    flex-shrink: 0;
+    max-width: 100%;
+  }
+  .metadata-container:not(.in-canvas, .in-popover) .multi-select-pill-content {
+    white-space: nowrap;
+    word-break: normal;
+    text-overflow: ellipsis;
+  }
+
   /* Narrow pane: Obsidian keeps the property label column at a fixed 9em, which leaves
      so little room for values that tag pills break mid-word. Shrink the label column
      so a pill can stay on one line. */
